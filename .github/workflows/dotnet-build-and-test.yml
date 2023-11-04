@@ -1,0 +1,32 @@
+name: Build and test
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        env: 
+          AzureConfigurationConnectionString: ${{ secrets.AZURECONFIGURATIONCONNECTIONSTRING }}
+        run: dotnet build --configuration Release
+        
+      - name: Test with dotnet
+        env: 
+          AzureConfigurationConnectionString: ${{ secrets.AZURECONFIGURATIONCONNECTIONSTRING }}
+        run: dotnet test --configuration Release
