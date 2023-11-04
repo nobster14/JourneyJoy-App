@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JourneyJoy.Model.Database.Tables;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace JourneyJoy.Model.Database
         #region Fields
 
         #region Public
+        public DbSet<User> Users { get; set; }
 
         #endregion
 
