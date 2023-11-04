@@ -48,7 +48,7 @@ namespace JourneyJoy.IntegrationTests.Services
             tables.Should().Contain(tableName);
         }
 
-        private static object[] tableNames = {  };
+        private static object[] tableNames = { "Users" };
 
         [TearDown]
         public void TearDown()

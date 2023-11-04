@@ -1,0 +1,16 @@
+﻿Add migration
+In root folder of the solution run command:
+
+dotnet ef migrations add MeaningfulMigrationName --project JourneyJoy.Backend
+
+where MeaningfulMigrationName is your migration name.
+
+Apply migration
+Then, if it succeeds, run:
+
+dotnet ef database update --project JourneyJoy.Backend
+
+Install tool
+If you don't have the required tool installed, try running command:
+
+dotnet tool restore / dotnet tool install --global dotnet-ef --version 6.*
