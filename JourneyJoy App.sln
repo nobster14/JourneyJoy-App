@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Backend", "JourneyJoy.Backend\JourneyJoy.Backend.csproj", "{3BDF8089-431C-4A85-94E6-819863AA6753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Backend", "JourneyJoy.Backend\JourneyJoy.Backend.csproj", "{3BDF8089-431C-4A85-94E6-819863AA6753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.UnitTests", "JourneyJoy.BackendTests\JourneyJoy.UnitTests.csproj", "{AD07120B-63D7-4D6F-9BF4-14930FB8110B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{87422676-5DF0-4313-84F9-AAD7CA3DD292}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.IntegrationTests", "JourneyJoy.IntegrationTests\JourneyJoy.IntegrationTests.csproj", "{9B485259-D313-4391-A4CD-3906D1B93A11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Model", "JourneyJoy.Model\JourneyJoy.Model.csproj", "{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +23,25 @@ Global
 		{3BDF8089-431C-4A85-94E6-819863AA6753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BDF8089-431C-4A85-94E6-819863AA6753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BDF8089-431C-4A85-94E6-819863AA6753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD07120B-63D7-4D6F-9BF4-14930FB8110B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD07120B-63D7-4D6F-9BF4-14930FB8110B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD07120B-63D7-4D6F-9BF4-14930FB8110B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD07120B-63D7-4D6F-9BF4-14930FB8110B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B485259-D313-4391-A4CD-3906D1B93A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B485259-D313-4391-A4CD-3906D1B93A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B485259-D313-4391-A4CD-3906D1B93A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B485259-D313-4391-A4CD-3906D1B93A11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AD07120B-63D7-4D6F-9BF4-14930FB8110B} = {87422676-5DF0-4313-84F9-AAD7CA3DD292}
+		{9B485259-D313-4391-A4CD-3906D1B93A11} = {87422676-5DF0-4313-84F9-AAD7CA3DD292}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAE259EF-CA75-48E1-83BD-5D2A9D1D95FE}
