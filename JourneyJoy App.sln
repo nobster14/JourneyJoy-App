@@ -5,13 +5,17 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Backend", "JourneyJoy.Backend\JourneyJoy.Backend.csproj", "{3BDF8089-431C-4A85-94E6-819863AA6753}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.UnitTests", "JourneyJoy.BackendTests\JourneyJoy.UnitTests.csproj", "{AD07120B-63D7-4D6F-9BF4-14930FB8110B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.UnitTests", "JourneyJoy.BackendTests\JourneyJoy.UnitTests.csproj", "{AD07120B-63D7-4D6F-9BF4-14930FB8110B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{87422676-5DF0-4313-84F9-AAD7CA3DD292}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.IntegrationTests", "JourneyJoy.IntegrationTests\JourneyJoy.IntegrationTests.csproj", "{9B485259-D313-4391-A4CD-3906D1B93A11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.IntegrationTests", "JourneyJoy.IntegrationTests\JourneyJoy.IntegrationTests.csproj", "{9B485259-D313-4391-A4CD-3906D1B93A11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Model", "JourneyJoy.Model\JourneyJoy.Model.csproj", "{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Model", "JourneyJoy.Model\JourneyJoy.Model.csproj", "{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Contracts", "JourneyJoy.Contracts\JourneyJoy.Contracts.csproj", "{C4D950F6-8E8A-4D08-8263-3F679AAC774C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Repository", "JourneyJoy.Repository\JourneyJoy.Repository.csproj", "{671DFBDE-A420-4678-BC2C-D916B1E53598}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,14 @@ Global
 		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2B244D9-61DA-4CF8-B2E4-47B7C4412871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D950F6-8E8A-4D08-8263-3F679AAC774C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D950F6-8E8A-4D08-8263-3F679AAC774C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D950F6-8E8A-4D08-8263-3F679AAC774C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D950F6-8E8A-4D08-8263-3F679AAC774C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671DFBDE-A420-4678-BC2C-D916B1E53598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671DFBDE-A420-4678-BC2C-D916B1E53598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671DFBDE-A420-4678-BC2C-D916B1E53598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671DFBDE-A420-4678-BC2C-D916B1E53598}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

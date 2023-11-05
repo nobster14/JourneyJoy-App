@@ -2,6 +2,8 @@ using JourneyJoy.Backend.Options;
 using JourneyJoy.Model.Database;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using JourneyJoy.Contracts;
+using JourneyJoy.Repository;
 
 namespace JourneyJoy.Backend
 {
@@ -31,6 +33,7 @@ namespace JourneyJoy.Backend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
             var app = builder.Build();
 
