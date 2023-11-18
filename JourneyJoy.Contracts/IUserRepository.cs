@@ -10,5 +10,6 @@ namespace JourneyJoy.Contracts
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
+        User? FindUserByEmail(string email);
     }
 }

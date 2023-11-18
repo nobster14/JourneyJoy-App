@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using JourneyJoy.Contracts;
 using JourneyJoy.Repository;
+using JourneyJoy.Utils.Security.HashAlgorithms;
+using JourneyJoy.Utils.Validation;
 
 namespace JourneyJoy.Backend
 {
@@ -34,6 +36,8 @@ namespace JourneyJoy.Backend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+            builder.Services.AddScoped<IHashAlgorithm, BCryptAlgorithm>();
+            builder.Services.AddScoped<IValidationService, ValidationService>();
 
             var app = builder.Build();
 

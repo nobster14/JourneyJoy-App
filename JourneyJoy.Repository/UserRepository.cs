@@ -18,5 +18,12 @@ namespace JourneyJoy.Repository
         }
 
         #endregion
+
+        #region Interface methods
+        public User? FindUserByEmail(string email)
+        {
+            return DatabaseContext.Set<User>().FirstOrDefault(user => user.Email == email);
+        }
+        #endregion
     }
 }
