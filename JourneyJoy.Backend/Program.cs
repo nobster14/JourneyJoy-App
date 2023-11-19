@@ -6,6 +6,11 @@ using JourneyJoy.Contracts;
 using JourneyJoy.Repository;
 using JourneyJoy.Utils.Security.HashAlgorithms;
 using JourneyJoy.Utils.Validation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using JourneyJoy.Utils.Security.Tokens;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace JourneyJoy.Backend
 {
@@ -49,6 +54,23 @@ namespace JourneyJoy.Backend
             });
 
             app.UseHttpsRedirection();
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = builder.Configuration.GetSection("Backend").Get<AppOptions>().JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey
+                   (Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Backend").Get<AppOptions>().JwtKey)),
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                };
+            });
 
             app.UseAuthorization();
 
