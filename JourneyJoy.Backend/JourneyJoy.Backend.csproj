@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JourneyJoy.Model\JourneyJoy.Model.csproj" />
     <ProjectReference Include="..\JourneyJoy.Repository\JourneyJoy.Repository.csproj" />
     <ProjectReference Include="..\JourneyJoy.Utils\JourneyJoy.Utils.csproj" />
   </ItemGroup>
