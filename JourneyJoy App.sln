@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Contracts", "Jou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Repository", "JourneyJoy.Repository\JourneyJoy.Repository.csproj", "{671DFBDE-A420-4678-BC2C-D916B1E53598}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Utils", "JourneyJoy.Utils\JourneyJoy.Utils.csproj", "{B5D501A6-4928-4DC2-8A04-51222E60E1AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Utils", "JourneyJoy.Utils\JourneyJoy.Utils.csproj", "{B5D501A6-4928-4DC2-8A04-51222E60E1AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.ExternalAPI", "JourneyJoy.ExternalAPI\JourneyJoy.ExternalAPI.csproj", "{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{B5D501A6-4928-4DC2-8A04-51222E60E1AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5D501A6-4928-4DC2-8A04-51222E60E1AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5D501A6-4928-4DC2-8A04-51222E60E1AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

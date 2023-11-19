@@ -6,6 +6,14 @@ using JourneyJoy.Contracts;
 using JourneyJoy.Repository;
 using JourneyJoy.Utils.Security.HashAlgorithms;
 using JourneyJoy.Utils.Validation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using JourneyJoy.Utils.Security.Tokens;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using JourneyJoy.ExternalAPI;
+using FluentAssertions.Common;
+using Microsoft.Extensions.Options;
 
 namespace JourneyJoy.Backend
 {
@@ -38,6 +46,33 @@ namespace JourneyJoy.Backend
             builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             builder.Services.AddScoped<IHashAlgorithm, BCryptAlgorithm>();
             builder.Services.AddScoped<IValidationService, ValidationService>();
+            builder.Services.AddScoped<IExternalApiService, ExternalAPIService>(x =>
+            {
+                return (new ExternalAPIService(new ExternalAPIOptions
+                {
+                    IsTripAdvisorAPIEnabled = builder.Configuration.GetSection("Backend").Get<AppOptions>().IsTripAdvisorAPIEnabled,
+                    TripAdvisorAPIKey = builder.Configuration.GetSection("Backend").Get<AppOptions>().TripAdvisorAPIKey,
+                }));
+            });
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = builder.Configuration.GetSection("Backend").Get<AppOptions>().JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey
+                   (Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Backend").Get<AppOptions>().JwtKey)),
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                };
+            });
 
             var app = builder.Build();
 
@@ -49,6 +84,7 @@ namespace JourneyJoy.Backend
             });
 
             app.UseHttpsRedirection();
+
 
             app.UseAuthorization();
 
