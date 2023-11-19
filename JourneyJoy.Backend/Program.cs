@@ -43,17 +43,6 @@ namespace JourneyJoy.Backend
             builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             builder.Services.AddScoped<IHashAlgorithm, BCryptAlgorithm>();
             builder.Services.AddScoped<IValidationService, ValidationService>();
-
-            var app = builder.Build();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                options.RoutePrefix = string.Empty;
-            });
-
-            app.UseHttpsRedirection();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,6 +60,18 @@ namespace JourneyJoy.Backend
                     ValidateIssuerSigningKey = true,
                 };
             });
+
+            var app = builder.Build();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = string.Empty;
+            });
+
+            app.UseHttpsRedirection();
+
 
             app.UseAuthorization();
 
