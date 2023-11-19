@@ -11,6 +11,9 @@ using JourneyJoy.Utils.Security.Tokens;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using JourneyJoy.ExternalAPI;
+using FluentAssertions.Common;
+using Microsoft.Extensions.Options;
 
 namespace JourneyJoy.Backend
 {
@@ -43,6 +46,16 @@ namespace JourneyJoy.Backend
             builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             builder.Services.AddScoped<IHashAlgorithm, BCryptAlgorithm>();
             builder.Services.AddScoped<IValidationService, ValidationService>();
+            builder.Services.AddScoped<IExternalApiService, ExternalAPIService>(x =>
+            {
+                return (new ExternalAPIService(new ExternalAPIOptions
+                {
+                    IsTripAdvisorAPIEnabled = builder.Configuration.GetSection("Backend").Get<AppOptions>().IsTripAdvisorAPIEnabled,
+                    TripAdvisorAPIKey = builder.Configuration.GetSection("Backend").Get<AppOptions>().TripAdvisorAPIKey,
+                }));
+            });
+
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
