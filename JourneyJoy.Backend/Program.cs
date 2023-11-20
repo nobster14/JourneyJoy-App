@@ -52,6 +52,8 @@ namespace JourneyJoy.Backend
                 {
                     IsTripAdvisorAPIEnabled = builder.Configuration.GetSection("Backend").Get<AppOptions>().IsTripAdvisorAPIEnabled,
                     TripAdvisorAPIKey = builder.Configuration.GetSection("Backend").Get<AppOptions>().TripAdvisorAPIKey,
+                    IsGoogleAPIEnabled = builder.Configuration.GetSection("Backend").Get<AppOptions>().IsGoogleAPIEnabled,
+                    GoogleAPIKey = builder.Configuration.GetSection("Backend").Get<AppOptions>().GoogleAPIKey
                 }));
             });
 

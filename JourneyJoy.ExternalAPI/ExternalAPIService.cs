@@ -11,6 +11,7 @@ namespace JourneyJoy.ExternalAPI
         #region Private Fields
         private ExternalAPIOptions options;
         private TripAdvisorAPI tripAdvisorAPI;
+        private GoogleMapsAPI googleMapsAPI;
         #endregion
 
         #region Constructors
@@ -19,6 +20,7 @@ namespace JourneyJoy.ExternalAPI
         {
             this.options = options;
             this.tripAdvisorAPI = new TripAdvisorAPI(options.TripAdvisorAPIKey, options.IsTripAdvisorAPIEnabled);
+            this.googleMapsAPI = new GoogleMapsAPI(options.GoogleAPIKey, options.IsGoogleAPIEnabled);
         }
 
 
@@ -27,6 +29,8 @@ namespace JourneyJoy.ExternalAPI
         #region Properties
 
         public TripAdvisorAPI TripAdvisorAPI => tripAdvisorAPI;
+
+        public GoogleMapsAPI GoogleMapsAPI => googleMapsAPI;
 
         #endregion
     }
