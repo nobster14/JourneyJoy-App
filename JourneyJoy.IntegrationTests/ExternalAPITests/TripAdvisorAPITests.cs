@@ -40,7 +40,7 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             LocationSearchQuery = "eiffel tower";
         }
 
-        //[Test]
+        [Test]
         public async Task TestTripAdvisorAPIOk()
         {
             if (!options.IsTripAdvisorAPIEnabled)
