@@ -14,13 +14,14 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.IntegrationTests.ExternalAPITests
 {
-    public class TripAdvisorAPITests
+    public class ExternalAPITests
     {
         #region Private Fields
 
         private WebApplicationFactory<Program>? application;
         private IExternalApiService? externalApiService;
         private string? LocationSearchQuery;
+        private string? GooglePlaceId;
         private AppOptions? options;
 
         #endregion
@@ -38,9 +39,10 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             externalApiService = scope?.ServiceProvider.GetRequiredService<IExternalApiService>();
 
             LocationSearchQuery = "eiffel tower";
+            GooglePlaceId = "ChIJeRpOeF67j4AR9ydy_PIzPuM";
         }
 
-        //[Test]
+        [Test]
         public async Task TestTripAdvisorAPIOk()
         {
             if (!options.IsTripAdvisorAPIEnabled)
@@ -49,6 +51,19 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             var tripAdvisorAPI = externalApiService.TripAdvisorAPI;
 
             var response = await tripAdvisorAPI.SearchLocations(LocationSearchQuery);
+
+            response.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TestGoogleAPIOk()
+        {
+            if (!options.IsGoogleAPIEnabled)
+                return;
+
+            var googleAPI = externalApiService.GoogleMapsAPI;
+
+            var response = await googleAPI.GetAddressForPlaceId(GooglePlaceId);
 
             response.Should().NotBeNull();
         }
