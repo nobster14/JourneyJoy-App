@@ -29,5 +29,6 @@ namespace JourneyJoy.Model.Database.Tables
         /// </summary>
         [MaxLength(1000)]
         public string Password { get; set; } = null!;
+        ICollection<Trip> UserTrips { get; set; } = null!;
     }
 }
