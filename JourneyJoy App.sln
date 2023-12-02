@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Repository", "Jo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.Utils", "JourneyJoy.Utils\JourneyJoy.Utils.csproj", "{B5D501A6-4928-4DC2-8A04-51222E60E1AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.ExternalAPI", "JourneyJoy.ExternalAPI\JourneyJoy.ExternalAPI.csproj", "{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JourneyJoy.ExternalAPI", "JourneyJoy.ExternalAPI\JourneyJoy.ExternalAPI.csproj", "{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JourneyJoy.Algorithm", "JourneyJoy.Algorithm\JourneyJoy.Algorithm.csproj", "{CC508D16-8E84-4B89-A052-63070E28A054}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB7DEEB-0DD1-486C-9367-309DA09DBC07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC508D16-8E84-4B89-A052-63070E28A054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC508D16-8E84-4B89-A052-63070E28A054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC508D16-8E84-4B89-A052-63070E28A054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC508D16-8E84-4B89-A052-63070E28A054}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
