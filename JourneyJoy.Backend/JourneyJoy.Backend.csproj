@@ -6,7 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>05f9782f-2764-4171-8f49-65c6917ee8d5</UserSecretsId>
   </PropertyGroup>
-
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.25" />

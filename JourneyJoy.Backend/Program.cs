@@ -14,6 +14,7 @@ using System.Text;
 using JourneyJoy.ExternalAPI;
 using FluentAssertions.Common;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace JourneyJoy.Backend
 {
@@ -75,7 +76,13 @@ namespace JourneyJoy.Backend
                     ValidateIssuerSigningKey = true,
                 };
             });
-
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var basePath = AppContext.BaseDirectory;
+                var fileName = typeof(Program).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                var commentsXmlPath = Path.Combine(basePath, fileName);
+                options.IncludeXmlComments(commentsXmlPath, true);
+            });
             var app = builder.Build();
 
             app.UseSwagger();
