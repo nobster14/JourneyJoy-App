@@ -50,7 +50,7 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
 
             var tripAdvisorAPI = externalApiService.TripAdvisorAPI;
 
-            var response = await tripAdvisorAPI.SearchLocations(LocationSearchQuery);
+            var response = await tripAdvisorAPI.SearchLocations(LocationSearchQuery, null);
 
             response.Should().NotBeNull();
         }

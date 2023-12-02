@@ -9,6 +9,7 @@ namespace JourneyJoy.Contracts
     public interface IRepositoryWrapper
     {
         IUserRepository UserRepository { get; }
+        ITripsRepository TripsRepository { get; }
         void Save();
     }
 }

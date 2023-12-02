@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JourneyJoy.Model.DTOs.ExternalAPI;
+using JourneyJoy.Model.DTOs.ExternalAPI.TripAdvisor;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace JourneyJoy.ExternalAPI
@@ -18,9 +21,15 @@ namespace JourneyJoy.ExternalAPI
         #endregion
 
         #region Public methods
-        public async Task<RestResponse> SearchLocations(string searchQuery)
+        public async Task<TripAdvisorAttractionDTO[]> SearchLocations(string searchQuery, string? latLong)
         {
-            return await MakeGETCall($"https://api.content.tripadvisor.com/api/v1/location/search?key={APIKey}&searchQuery={searchQuery}&language=en");
+            StringBuilder url = new StringBuilder($"https://api.content.tripadvisor.com/api/v1/location/search?key={APIKey}&searchQuery={searchQuery}&language=en");
+            if (latLong != null)
+                url.Append($"&latLong={latLong}");
+
+            var res = await MakeGETCall(url.ToString());
+
+            return JsonConvert.DeserializeObject<BasicJsonArray<TripAdvisorAttractionDTO[]>>(res.Content).Data;
         }
         #endregion
     }
