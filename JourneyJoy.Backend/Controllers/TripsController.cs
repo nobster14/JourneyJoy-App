@@ -17,7 +17,7 @@ namespace JourneyJoy.Backend.Controllers
 {
     [Route("trips")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TripsController : ControllerBase
     {
         #region Fields
