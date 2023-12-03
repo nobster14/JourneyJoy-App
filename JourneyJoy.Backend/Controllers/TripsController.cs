@@ -6,6 +6,7 @@ using JourneyJoy.Model.Database.Tables;
 using JourneyJoy.Model.DTOs;
 using JourneyJoy.Model.DTOs.ExternalAPI.TripAdvisor;
 using JourneyJoy.Model.Requests;
+using JourneyJoy.Utils.Extensions;
 using JourneyJoy.Utils.Security.HashAlgorithms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,77 @@ namespace JourneyJoy.Backend.Controllers
             return Ok(returnData);
         }
 
+        #endregion
+
+        #region Post methods
+        // POST trips
+        /// <summary>
+        /// Create Trip.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult CreateTrip([FromBody] CreateTripRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+            var tripId = Guid.NewGuid();
+
+            repositoryWrapper.TripsRepository.Create(new Trip()
+            {
+                Description = request.Description,
+                Name = request.Name,
+                Photo = request.Picture,
+                Id = tripId,
+            });
+
+            var newTrip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+
+            user.UserTrips.Add(newTrip);
+            this.repositoryWrapper.UserRepository.Update(user);
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+        #endregion
+
+        #region Remove methods
+        // DELETE trips/{tripId}
+        /// <summary>
+        /// Remove Trip.
+        /// </summary>
+        /// <param name="tripId">Removed trip Id</param>
+        /// <returns></returns>
+        [HttpDelete("{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult RemoveTrip(Guid tripId)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var tripToRemove = user.UserTrips.FirstOrDefault(trip => trip.Id == tripId);
+            if (tripToRemove == null)
+                return NotFound("Calling user does not have this trip.");
+
+            user.UserTrips.Remove(tripToRemove);
+            this.repositoryWrapper.UserRepository.Update(user);
+
+            var tripToRemove2 = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (tripToRemove2 == null)
+                return NotFound("Trip with calling Id not found");
+
+            this.repositoryWrapper.TripsRepository.Delete(tripToRemove2);
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
         #endregion
     }
 }
