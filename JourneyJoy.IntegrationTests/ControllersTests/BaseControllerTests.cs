@@ -18,6 +18,8 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
     {
         protected WebApplicationFactory<Program> Application = null!;
         protected HttpClient HttpClient = null!;
+        protected const string loginEndpoint = "users/login";
+
 
         [SetUp]
         public void Setup()

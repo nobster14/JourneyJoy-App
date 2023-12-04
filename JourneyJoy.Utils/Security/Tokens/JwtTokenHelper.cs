@@ -13,6 +13,8 @@ namespace JourneyJoy.Utils.Security.Tokens
     public static class JwtTokenHelper
     {
         #region Fields
+        public const string User = "User";
+
         #endregion
 
         #region Public methods
@@ -49,7 +51,10 @@ namespace JourneyJoy.Utils.Security.Tokens
 
             return (stringToken, options);
         }
-
+        public static bool AudiencesValidator(IEnumerable<string> audiences, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            return audiences.Count() == 1;
+        }
         public static bool IsIdValid(this string JwtToken, string hashedId)
         {
             return hashedId == GetIdFromToken(JwtToken);

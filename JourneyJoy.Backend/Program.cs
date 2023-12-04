@@ -64,7 +64,7 @@ namespace JourneyJoy.Backend
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            }).AddJwtBearer(JwtTokenHelper.User, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -74,8 +74,12 @@ namespace JourneyJoy.Backend
                     ValidateIssuer = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    AudienceValidator = JwtTokenHelper.AudiencesValidator
                 };
             });
+
+            builder.Services.AddAuthorization();
+
             builder.Services.AddSwaggerGen(options =>
             {
                 var basePath = AppContext.BaseDirectory;
@@ -96,7 +100,7 @@ namespace JourneyJoy.Backend
 
 
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.MapControllers();
 
             app.Run();

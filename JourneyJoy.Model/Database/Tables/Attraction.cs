@@ -10,6 +10,8 @@ namespace JourneyJoy.Model.Database.Tables
     public record Attraction
     {
         public Guid Id { get; set; }
+        public Trip Trip { get; set; }
+
         [MaxLength(200)]
         public string Name { get; set; } = null!;
         [MaxLength(500)]

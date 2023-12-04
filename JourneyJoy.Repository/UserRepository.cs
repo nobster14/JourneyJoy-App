@@ -1,6 +1,7 @@
 ﻿using JourneyJoy.Contracts;
 using JourneyJoy.Model.Database;
 using JourneyJoy.Model.Database.Tables;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,13 @@ namespace JourneyJoy.Repository
         public User? FindUserByEmail(string email)
         {
             return DatabaseContext.Set<User>().FirstOrDefault(user => user.Email == email);
+        }
+        #endregion
+
+        #region Override methods
+        public override User? GetById(Guid id)
+        {
+            return DatabaseContext.Users.Include(it => it.UserTrips).Where(it => it.Id == id).FirstOrDefault();
         }
         #endregion
     }

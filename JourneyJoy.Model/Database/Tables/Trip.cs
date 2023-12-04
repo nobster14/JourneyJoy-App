@@ -11,13 +11,15 @@ namespace JourneyJoy.Model.Database.Tables
     {
         public Guid Id { get; set; }
 
+        public User User { get; set; }
+
         [MaxLength(200)]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; } = null!;
 
         [MaxLength(5000)]
         public string? Description { get; set; }
         public string? Photo { get; set; }
-        ICollection<Attraction> Attractions { get; set; } = null!;
+        public ICollection<Attraction> Attractions { get; set; } = null!;
         public Route? Route { get; set; }
     }
 }

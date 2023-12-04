@@ -51,6 +51,7 @@ namespace JourneyJoy.Backend.Controllers
                 Email = request.Email,
                 Nickname = request.Nickname,
                 Password = hashAlgorithm.Hash(request.Password),
+                UserTrips = new List<Trip>()
             });
             repositoryWrapper.Save();
 
