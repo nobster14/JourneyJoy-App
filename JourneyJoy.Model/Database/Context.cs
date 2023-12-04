@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +37,8 @@ namespace JourneyJoy.Model.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             SetUpAttractionOwnershipOfLocation(modelBuilder);
+            SetUpUserOwnershipOfTrip(modelBuilder);
+            SetUpTripOwnershipOfAttraction(modelBuilder);
         }
         #endregion
 
@@ -45,6 +48,28 @@ namespace JourneyJoy.Model.Database
             modelBuilder.Entity<Attraction>()
                 .OwnsOne(e => e.Location);
         }
-        #endregion
+
+        private static void SetUpUserOwnershipOfTrip(ModelBuilder modelBuilder)
+        {
+            {
+                modelBuilder.Entity<Trip>()
+                    .HasOne(t => t.User)
+                    .WithMany(t => t.UserTrips)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            }
+        }
+
+        private static void SetUpTripOwnershipOfAttraction(ModelBuilder modelBuilder)
+        {
+            {
+                modelBuilder.Entity<Attraction>()
+                    .HasOne(t => t.Trip)
+                    .WithMany(t => t.Attractions)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            }
+        }
+        #endregion  
     }
 }

@@ -17,7 +17,6 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
         private Guid userId;
         private string userEmail = null!;
         private string userPassword = null!;
-
         #endregion
 
         #region Override methods
@@ -27,14 +26,14 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             userEmail = "testuser@mail.com";
             userPassword = "tesT@ssword123";
 
-            var organizer = new User
+            var user = new User
             {
                 Id = userId,
                 Nickname = "testNickname",
                 Email = userEmail,
                 Password = new BCryptAlgorithm().Hash(userPassword),
             };
-            databaseContext.Add(organizer);
+            databaseContext.Add(user);
 
             databaseContext.SaveChanges();
         }
@@ -46,7 +45,7 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
         [Test]
         public async Task LoginUser_AuthotizarionHeaderAfterLoginShouldNotBeNull()
         {
-            await SignIn(userEmail, userPassword, "users/login");
+            await SignIn(userEmail, userPassword, loginEndpoint);
 
             HttpClient.DefaultRequestHeaders.Authorization.Should().NotBeNull();
         }

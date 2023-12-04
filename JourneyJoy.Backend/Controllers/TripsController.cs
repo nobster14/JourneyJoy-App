@@ -8,17 +8,19 @@ using JourneyJoy.Model.DTOs.ExternalAPI.TripAdvisor;
 using JourneyJoy.Model.Requests;
 using JourneyJoy.Utils.Extensions;
 using JourneyJoy.Utils.Security.HashAlgorithms;
+using JourneyJoy.Utils.Security.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 
 namespace JourneyJoy.Backend.Controllers
 {
     [Route("trips")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtTokenHelper.User)]
     public class TripsController : ControllerBase
     {
         #region Fields
@@ -75,23 +77,53 @@ namespace JourneyJoy.Backend.Controllers
                 return NotFound("User does not exists.");
             var tripId = Guid.NewGuid();
 
-            repositoryWrapper.TripsRepository.Create(new Trip()
+            var newTrip = new Trip()
             {
                 Description = request.Description,
                 Name = request.Name,
                 Photo = request.Picture,
                 Id = tripId,
-            });
+                User = user
+            };
 
-            var newTrip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (user.UserTrips == null)
+                user.UserTrips = new List<Trip>() { newTrip };
+            else
+                user.UserTrips.Add(newTrip);
 
-            user.UserTrips.Add(newTrip);
+            this.repositoryWrapper.TripsRepository.Create(newTrip);
             this.repositoryWrapper.UserRepository.Update(user);
+
             repositoryWrapper.Save();
 
             return Ok();
         }
         #endregion
+
+        #region Get methods
+        // GET trips
+        /// <summary>
+        /// Get trips for user.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripDTO[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTrips([FromQuery] TakeSkipRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            if (user.UserTrips == null || user.UserTrips.Count == 0)
+                return Ok();
+
+            return Ok(user.UserTrips.Select(it => TripDTO.FromDatabaseTrip(it)));
+        }
+        #endregion
+
 
         #region Remove methods
         // DELETE trips/{tripId}
