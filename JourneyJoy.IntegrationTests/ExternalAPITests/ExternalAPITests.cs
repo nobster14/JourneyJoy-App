@@ -53,6 +53,11 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             var response = await tripAdvisorAPI.SearchLocations(LocationSearchQuery, null);
 
             response.Should().NotBeNull();
+
+            /// Wyłaczone - mamy darmowy limit tylko 5000 zapytań miesięcznie
+            //var photoTestspomse = await tripAdvisorAPI.GetPhotoForTripAdvisorLocation(response.First().LocationId.ToString());
+
+            //photoTestspomse.Should().NotBeNull();
         }
 
         [Test]
