@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,12 +10,25 @@ namespace JourneyJoy.Model.Database.Tables
 {
     public record Location
     {
-        [MaxLength(200)]
-        public string City { get; set; } = null!;
+        public string? Street1 { get; set; }
 
-        [MaxLength(200)]
-        public string StreetName { get; set; } = null!;
-        public double X { get; set; }
-        public double Y { get; set; }
+        public string? Street2 { get; set; }
+
+        public string? City { get; set; }
+
+        public string? State { get; set; }
+
+        public string? Country { get; set; }
+
+        public string? Postalcode { get; set; }
+
+        public string? Address { get; set; }
+
+        public string? Phone { get; set; }
+
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+
     }
 }

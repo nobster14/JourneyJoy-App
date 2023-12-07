@@ -5,6 +5,7 @@ using JourneyJoy.ExternalAPI;
 using JourneyJoy.Model.Database.Tables;
 using JourneyJoy.Model.DTOs;
 using JourneyJoy.Model.DTOs.ExternalAPI.TripAdvisor;
+using JourneyJoy.Model.ModelClassesSerializers;
 using JourneyJoy.Model.Requests;
 using JourneyJoy.Utils.Extensions;
 using JourneyJoy.Utils.Security.HashAlgorithms;
@@ -54,6 +55,10 @@ namespace JourneyJoy.Backend.Controllers
         {
             var returnData = externalApiService.TripAdvisorAPI.SearchLocations(name, latLong).Result;
 
+            /// API jest wyłączone w konfiguracji
+            if (returnData == null)
+                return NotFound("API is disabled - contact with administrator.");
+
             return Ok(returnData);
         }
 
@@ -83,7 +88,7 @@ namespace JourneyJoy.Backend.Controllers
                 Name = request.Name,
                 Photo = request.Picture,
                 Id = tripId,
-                User = user
+                UserId = userId
             };
 
             if (user.UserTrips == null)
@@ -93,6 +98,52 @@ namespace JourneyJoy.Backend.Controllers
 
             this.repositoryWrapper.TripsRepository.Create(newTrip);
             this.repositoryWrapper.UserRepository.Update(user);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
+        // POST trips/{tripId}
+        /// <summary>
+        /// Add attraction to trip.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult AddAttractionToTrip(Guid tripId, [FromBody] CreateAttractionRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            var attraction = new Attraction()
+            {
+                Description = request.Description,
+                TripId = trip.Id,
+                Location = LocationDTO.ToDatabaseLocation(request.Location),
+                LocationType = request.LocationType,
+                Name = request.Name,
+                OpenHours = BaseObjectSerializer<DateTime[][]>.Serialize(request.OpenHours),
+                Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices),
+                Photo = request.Photo,
+                TimeNeeded = request.TimeNeeded,
+            };
+
+            if (trip.Attractions == null)
+                trip.Attractions = new List<Attraction>() { attraction };
+            else
+                trip.Attractions.Add(attraction);
+
+            this.repositoryWrapper.AttractionRepository.Create(attraction);
+            this.repositoryWrapper.TripsRepository.Update(trip);
 
             repositoryWrapper.Save();
 
@@ -120,7 +171,7 @@ namespace JourneyJoy.Backend.Controllers
             if (user.UserTrips == null || user.UserTrips.Count == 0)
                 return Ok();
 
-            return Ok(user.UserTrips.Select(it => TripDTO.FromDatabaseTrip(it)));
+            return Ok(this.repositoryWrapper.TripsRepository.GetByIds(user.UserTrips.Select(it => it.Id)).Select(it => TripDTO.FromDatabaseTrip(it)));
         }
         #endregion
 
@@ -128,7 +179,7 @@ namespace JourneyJoy.Backend.Controllers
         #region Remove methods
         // DELETE trips/{tripId}
         /// <summary>
-        /// Remove Trip.
+        /// Remove trip.
         /// </summary>
         /// <param name="tripId">Removed trip Id</param>
         /// <returns></returns>
@@ -146,14 +197,52 @@ namespace JourneyJoy.Backend.Controllers
             if (tripToRemove == null)
                 return NotFound("Calling user does not have this trip.");
 
+            this.repositoryWrapper.TripsRepository.Delete(tripToRemove);
+
             user.UserTrips.Remove(tripToRemove);
             this.repositoryWrapper.UserRepository.Update(user);
 
-            var tripToRemove2 = this.repositoryWrapper.TripsRepository.GetById(tripId);
-            if (tripToRemove2 == null)
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
+        // DELETE trips/{tripId}
+        /// <summary>
+        /// Remove attraction from Trip.
+        /// </summary>
+        /// <param name="tripId">Trip Id of attraction</param>
+        /// <param name="attractionId">Id of attraction</param>
+        /// <returns></returns>
+        [HttpDelete("{tripId}/{attractionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult RemoveAttractionFromTrip(Guid tripId, Guid attractionId)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Attractions == null)
+                return NotFound("Trip with calling Id not found in attraction list");
+
+            var attractionToRemove = trip.Attractions.FirstOrDefault(attraction => attraction.Id == attractionId);
+            if (attractionToRemove == null)
+                return NotFound("Trip with calling Id not found in attraction list");
+
+            trip.Attractions.Remove(attractionToRemove);
+            this.repositoryWrapper.TripsRepository.Update(trip);
+
+            var attractionToRemove2 = this.repositoryWrapper.AttractionRepository.GetById(attractionId);
+            if (attractionToRemove2 == null)
                 return NotFound("Trip with calling Id not found");
 
-            this.repositoryWrapper.TripsRepository.Delete(tripToRemove2);
+            this.repositoryWrapper.AttractionRepository.Delete(attractionToRemove2);
             repositoryWrapper.Save();
 
             return Ok();

@@ -10,6 +10,8 @@ namespace JourneyJoy.Contracts
     {
         IUserRepository UserRepository { get; }
         ITripsRepository TripsRepository { get; }
+        IAttractionRepository AttractionRepository { get; }
+
         void Save();
     }
 }

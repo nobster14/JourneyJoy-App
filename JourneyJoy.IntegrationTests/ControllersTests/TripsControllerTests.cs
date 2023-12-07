@@ -25,7 +25,7 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
         private Guid userId;
         private string userEmail = null!;
         private string userPassword = null!;
-
+        private string attractionAdress = "attraction test adress";
         protected const string TripsEndpoint = "trips";
         #endregion
 
@@ -58,18 +58,55 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             Name = "trip name",
             Picture = "Trip picture"
         };
+
+        private CreateAttractionRequest GetCreateAttractionRequest()
+        {
+            var ret = new CreateAttractionRequest()
+            {
+                Description = "trip description",
+                Name = "trip name",
+                Photo = "Trip picture",
+                Location = new LocationDTO()
+                {
+                    Address = attractionAdress
+                },
+                Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
+            };
+
+            DateTime[][] dateTimeArray = new DateTime[7][];
+
+
+            for (int i = 0; i < 7; i++)
+            {
+                dateTimeArray[i] = new DateTime[2];
+                for (int j = 0; j < 2; j++)
+                {
+                    dateTimeArray[i][j] = DateTime.Now;
+                }
+            }
+
+            ret.OpenHours = dateTimeArray;
+
+            return ret;
+        }
         #endregion
 
         #region Tests
+        /// <summary>
+        /// Testuje metody POST, GET, REMOVE dla wycieczek oraz POST, REMOVE dla atrakcji
+        /// </summary>
+        /// <returns></returns>
         [Test]
-        public async Task Test_Create_Remove_Trip()
+        public async Task Test_TripAndAttractionLifeCycle()
         {
             await SignIn(userEmail, userPassword, "users/login");
 
+            //Tworzymy wycieczkę
             var request = RequestFactory.RequestMessageWithBody(TripsEndpoint, HttpMethod.Post, GetCreateTripRequest());
             var response = await HttpClient.SendAsync(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
+            //Pobieramy wycieczkę
             var response1 = await HttpClient.GetAsync(TripsEndpoint);
             response1.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -78,6 +115,46 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
 
             var tripId = result.First().ID;
 
+            //Tworzymy atrakcję
+            var createAttractionRequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest());
+            var createAttractionResponse = await HttpClient.SendAsync(createAttractionRequest);
+            createAttractionResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+
+            result.First().ID.Should().Be(tripId);    
+            result.First().Attractions.Should().NotBeNull();
+            result.First().Attractions.Count().Should().Be(1);
+            var addedAttraction = result.First().Attractions.First();
+            addedAttraction.Location.Should().NotBeNull();
+            addedAttraction.Location.Address.Should().Be(attractionAdress);
+            addedAttraction.OpenHours.Should().NotBeNull();
+            addedAttraction.OpenHours.Count().Should().Be(7);
+            addedAttraction.OpenHours[0].Count().Should().Be(2);
+
+            //Usuwamy atrakcję
+            var removeAttractionResponse = await HttpClient.DeleteAsync($"{TripsEndpoint}/{tripId}/{addedAttraction.Id}");
+            removeAttractionResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+
+            result.First().ID.Should().Be(tripId);
+            result.First().Attractions.Count.Should().Be(0);
+
+
+            using var scope = GetNewScope();
+            using var context = scope.ServiceProvider.GetService<DatabaseContext>()!;
+            context.Set<Attraction>().Count().Should().Be(0);
+
+            //Usuwamy wycieczkę
             var response2 = await HttpClient.DeleteAsync($"{TripsEndpoint}/{tripId}");
             response2.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -86,9 +163,9 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             var result2 = await response3.GetContent<TripDTO[]>();
             result2?.FirstOrDefault().Should().BeNull();
 
-            using var scope = GetNewScope();
-            using var context = scope.ServiceProvider.GetService<DatabaseContext>()!;
-            context.Set<Trip>().Count().Should().Be(0);
+            using var scope1 = GetNewScope();
+            using var context2 = scope1.ServiceProvider.GetService<DatabaseContext>()!;
+            context2.Set<Trip>().Count().Should().Be(0);
 
             var response4 = await HttpClient.GetAsync(TripsEndpoint);
             response4.StatusCode.Should().Be(HttpStatusCode.OK);

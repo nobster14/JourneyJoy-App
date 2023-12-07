@@ -13,6 +13,8 @@ namespace JourneyJoy.Model.Database.Tables
 
         public User User { get; set; }
 
+        public Guid UserId { get; set; }
+
         [MaxLength(200)]
         public string? Name { get; set; } = null!;
 
