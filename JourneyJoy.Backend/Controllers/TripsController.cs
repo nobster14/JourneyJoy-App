@@ -63,7 +63,7 @@ namespace JourneyJoy.Backend.Controllers
         }
         // GET trips/attractions/photos/{tripAdvisorLocationId}
         /// <summary>
-        /// Get photos for attractions= Id from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
+        /// Get photos for attractionId from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
         /// </summary>
         /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
         /// <returns></returns>
