@@ -61,6 +61,26 @@ namespace JourneyJoy.Backend.Controllers
 
             return Ok(returnData);
         }
+        // GET trips/attractions/photos/{tripAdvisorLocationId}
+        /// <summary>
+        /// Get attractions from TripAdvisor.
+        /// </summary>
+        /// <param name="latLong">Latitude/Longitude pair to scope down the search around a specifc point - eg. "42.3455,-71.10767"</param>
+        /// <param name="name">Name of location</param>
+        /// <returns></returns>
+        [HttpGet("attractions/photos/{tripAdvisorLocationId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTripAdvisorAttractions(string tripAdvisorLocationId)
+        {
+            var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
+
+            /// API jest wyłączone w konfiguracji
+            if (returnData == null)
+                return NotFound("API is disabled - contact with administrator.");
+
+            return Ok(returnData);
+        }
 
         #endregion
 
