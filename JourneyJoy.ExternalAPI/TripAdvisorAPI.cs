@@ -28,6 +28,10 @@ namespace JourneyJoy.ExternalAPI
                 url.Append($"&latLong={latLong}");
 
             var res = await MakeGETCall(url.ToString());
+            
+            /// API jest wyłączone w konfiguracji
+            if (res == null)
+                return null;
 
             return JsonConvert.DeserializeObject<BasicJsonArray<TripAdvisorAttractionDTO[]>>(res.Content).Data;
         }

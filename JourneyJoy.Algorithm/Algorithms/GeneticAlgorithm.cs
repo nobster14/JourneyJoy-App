@@ -1,15 +1,11 @@
-﻿using JourneyJoy.Algorithm.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JourneyJoy.Algorithm.Extensions;
+using JourneyJoy.Model.DTOs;
 
 namespace JourneyJoy.Algorithm.Algorithms
 {
     public static class GeneticAlgorithm
     {
-        public static List<int> FindShortestRoute(List<Attraction> attractions, int populationSize, int numberOfGenerations, double crossoverProbability, double mutationProbability)
+        public static List<int> FindShortestRoute(List<AttractionDTO> attractions, int populationSize, int numberOfGenerations, double crossoverProbability, double mutationProbability)
         {
             var adjustmentMatrix = CreateAdjustmentMatrix(attractions);
 
@@ -47,16 +43,16 @@ namespace JourneyJoy.Algorithm.Algorithms
             return bestRoute;
         }
 
-        private static float[,] CreateAdjustmentMatrix(List<Attraction> attractions)
+        private static float[,] CreateAdjustmentMatrix(List<AttractionDTO> attractions)
         {
             var adjustmentMatrix = new float[attractions.Count, attractions.Count];
             for (int i = 0; i < attractions.Count; i++)
             {
-                var attr1 = attractions[i].GetLatLon();
+                var attr1 = attractions[i].GetLanLon();
 
                 for (int j = i + 1; j < attractions.Count; j++)
                 {
-                    var attr2 = attractions[j].GetLatLon();
+                    var attr2 = attractions[j].GetLanLon();
                     adjustmentMatrix[i, j] = adjustmentMatrix[j, i] = Haversine.CalculateFormula(attr1.Lat, attr1.Lon, attr2.Lat, attr2.Lon);
                 }
             }

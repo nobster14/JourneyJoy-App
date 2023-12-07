@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.Contracts
 {
-    public interface ITripsRepository : IRepositoryBase<Trip>
+    public interface IAttractionRepository : IRepositoryBase<Attraction>
     {
-        public IEnumerable<Trip>? GetByIds(IEnumerable<Guid> id);
     }
 }
