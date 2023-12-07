@@ -63,15 +63,14 @@ namespace JourneyJoy.Backend.Controllers
         }
         // GET trips/attractions/photos/{tripAdvisorLocationId}
         /// <summary>
-        /// Get attractions from TripAdvisor.
+        /// Get photos for attractions= Id from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
         /// </summary>
-        /// <param name="latLong">Latitude/Longitude pair to scope down the search around a specifc point - eg. "42.3455,-71.10767"</param>
-        /// <param name="name">Name of location</param>
+        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
         /// <returns></returns>
         [HttpGet("attractions/photos/{tripAdvisorLocationId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTripAdvisorAttractions(string tripAdvisorLocationId)
+        public IActionResult GetTripAdvisorAttractionsPhotos(string tripAdvisorLocationId)
         {
             var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
 
