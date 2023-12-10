@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JourneyJoy.Model.Database.Tables;
 using JourneyJoy.Model.DTOs.ExternalAPI;
 using JourneyJoy.Model.DTOs.ExternalAPI.TripAdvisor;
 using Newtonsoft.Json;
@@ -47,6 +48,19 @@ namespace JourneyJoy.ExternalAPI
                 return null;
 
             return JsonConvert.DeserializeObject<BasicJsonArray<TripAdvisorPhotoResponseDTO[]>>(res.Content).Data;
+        }
+
+        public async Task<TripAdvisorDetailsResponseDTO> GetDetailsForLocation(string locationId)
+        { 
+            StringBuilder url = new StringBuilder($"https://api.content.tripadvisor.com/api/v1/location/{locationId}/details?language=en&currency=USD&key={APIKey}");
+
+            var res = await MakeGETCall(url.ToString());
+
+            /// API jest wyłączone w konfiguracji
+            if (res == null)
+                return null;
+
+            return JsonConvert.DeserializeObject<TripAdvisorDetailsResponseDTO>(res.Content);
         }
         #endregion
     }

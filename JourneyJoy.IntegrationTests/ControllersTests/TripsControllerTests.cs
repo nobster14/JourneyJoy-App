@@ -135,6 +135,17 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             addedAttraction.OpenHours.Should().NotBeNull();
             addedAttraction.OpenHours.Count().Should().Be(7);
             addedAttraction.OpenHours[0].Count().Should().Be(2);
+            addedAttraction.IsStartPoint.Should().BeFalse();
+
+            var setAttractionAsStartPoint = await HttpClient.PatchAsync($"{TripsEndpoint}/{tripId}/{addedAttraction.Id}", null);
+
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            var modifiedAsStartPoint = result.First().Attractions.First();
+            modifiedAsStartPoint.IsStartPoint.Should().BeTrue();
+
 
             //Usuwamy atrakcję
             var removeAttractionResponse = await HttpClient.DeleteAsync($"{TripsEndpoint}/{tripId}/{addedAttraction.Id}");

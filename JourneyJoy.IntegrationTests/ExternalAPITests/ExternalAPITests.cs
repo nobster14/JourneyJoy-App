@@ -3,6 +3,7 @@ using JourneyJoy.Backend.Options;
 using JourneyJoy.ExternalAPI;
 using JourneyJoy.IntegrationTests.WebApplication;
 using JourneyJoy.Model.Database;
+using JourneyJoy.Model.DTOs;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -23,7 +24,7 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
         private string? LocationSearchQuery;
         private string? GooglePlaceId;
         private AppOptions? options;
-
+        private List<AttractionDTO> attractions;
         #endregion
 
         [SetUp]
@@ -40,6 +41,26 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
 
             LocationSearchQuery = "eiffel tower";
             GooglePlaceId = "ChIJeRpOeF67j4AR9ydy_PIzPuM";
+
+            attractions = new List<AttractionDTO>()
+            {
+                new AttractionDTO()
+                {
+                    Location = new LocationDTO()
+                    {
+                        Latitude = 40.659569,
+                        Longitude = -73.933783
+                    }
+                },
+                new AttractionDTO()
+                {
+                    Location = new LocationDTO()
+                    {
+                        Latitude = 40.729029,
+                        Longitude = -73.851524
+                    }
+                }
+            };
         }
 
         [Test]
@@ -58,6 +79,10 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             //var photoTestspomse = await tripAdvisorAPI.GetPhotoForTripAdvisorLocation(response.First().LocationId.ToString());
 
             //photoTestspomse.Should().NotBeNull();
+
+            //var locationDetailsResponse = await tripAdvisorAPI.GetDetailsForLocation(response.First().LocationId.ToString());
+
+            //locationDetailsResponse.Should().NotBeNull();
         }
 
         [Test]
@@ -69,6 +94,23 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             var googleAPI = externalApiService.GoogleMapsAPI;
 
             var response = await googleAPI.GetAddressForPlaceId(GooglePlaceId);
+
+            response.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Wyłączone - płatne requesty
+        /// </summary>
+        /// <returns></returns>
+        //[Test]
+        public async Task TestDistanceMatrixResponse()
+        {
+            if (!options.IsGoogleAPIEnabled)
+                return;
+
+            var googleAPI = externalApiService.GoogleMapsAPI;
+
+            var response = await googleAPI.GetDistanceMatrixForAttraction(attractions);
 
             response.Should().NotBeNull();
         }

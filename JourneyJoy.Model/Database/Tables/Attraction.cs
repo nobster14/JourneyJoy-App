@@ -26,5 +26,7 @@ namespace JourneyJoy.Model.Database.Tables
         public string OpenHours { get; set; }
         public string Prices { get; set; }
         public double TimeNeeded { get; set; }
-    }
+
+        public bool IsStartPoint { get; set; }
+}
 }

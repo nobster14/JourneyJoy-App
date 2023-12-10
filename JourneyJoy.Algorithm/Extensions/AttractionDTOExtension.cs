@@ -20,5 +20,19 @@ namespace JourneyJoy.Algorithm.Extensions
             //todo
             return true;
         }
+
+        public static IEnumerable<((int hour, int minute) open, (int hour, int minute) close)> GetOpenAndCloseHoursForAttraction(this AttractionDTO attraction)
+        {
+            // błędny format/brak danych - uznajemy, że godzin otwarcia nie ma
+            if (attraction.OpenHours == null || attraction.OpenHours.Count() != 7 || attraction.OpenHours.Any(it => it.Count() != 2))
+                return null;
+
+            (int hour, int minute) StringToHourAndMinute(string hhmmString)
+            {
+                return (Int32.Parse(hhmmString.Substring(0, 2)), Int32.Parse(hhmmString.Substring(2, 2)));
+            }
+
+            return attraction.OpenHours.Select(it => (StringToHourAndMinute(it[0]), StringToHourAndMinute(it[1])));
+        }
     }
 }
