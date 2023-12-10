@@ -102,7 +102,7 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
         /// Wyłączone - płatne requesty
         /// </summary>
         /// <returns></returns>
-        [Test]
+        //[Test]
         public async Task TestDistanceMatrixResponse()
         {
             if (!options.IsGoogleAPIEnabled)
