@@ -35,6 +35,19 @@ namespace JourneyJoy.ExternalAPI
 
             return JsonConvert.DeserializeObject<BasicJsonArray<TripAdvisorAttractionDTO[]>>(res.Content).Data;
         }
+
+        public async Task<TripAdvisorPhotoResponseDTO[]> GetPhotoForTripAdvisorLocation(string locationId)
+        {
+            StringBuilder url = new StringBuilder($"https://api.content.tripadvisor.com/api/v1/location/{locationId}/photos?key={APIKey}&language=en");
+
+            var res = await MakeGETCall(url.ToString());
+
+            /// API jest wyłączone w konfiguracji
+            if (res == null)
+                return null;
+
+            return JsonConvert.DeserializeObject<BasicJsonArray<TripAdvisorPhotoResponseDTO[]>>(res.Content).Data;
+        }
         #endregion
     }
 }
