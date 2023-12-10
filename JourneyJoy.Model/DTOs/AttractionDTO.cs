@@ -27,6 +27,7 @@ namespace JourneyJoy.Model.DTOs
         public DateTime[][] OpenHours { get; set; }
         public double[] Prices { get; set; }
         public double TimeNeeded { get; set; }
+        public bool IfStartPoint { get; set; }
         public static AttractionDTO FromDatabaseAttraction(Attraction attraction)
         {
             return new AttractionDTO()
