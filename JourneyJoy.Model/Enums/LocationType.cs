@@ -8,6 +8,7 @@ namespace JourneyJoy.Model.Enums
 {
     public enum LocationType
     {
-        None = 0,
+        WithHours = 0,
+        WithoutHours = 1,
     }
 }

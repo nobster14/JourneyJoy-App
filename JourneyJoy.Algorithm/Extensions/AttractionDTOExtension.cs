@@ -21,11 +21,16 @@ namespace JourneyJoy.Algorithm.Extensions
             return true;
         }
 
+        /// <summary>
+        /// Zwraca kolekcję godzin otwarcia - W przypadku braku godzin otwarcia zwracamy pustą kolekcję
+        /// </summary>
+        /// <param name="attraction"></param>
+        /// <returns></returns>
         public static IEnumerable<((int hour, int minute) open, (int hour, int minute) close)> GetOpenAndCloseHoursForAttraction(this AttractionDTO attraction)
         {
             // błędny format/brak danych - uznajemy, że godzin otwarcia nie ma
-            if (attraction.OpenHours == null || attraction.OpenHours.Count() != 7 || attraction.OpenHours.Any(it => it.Count() != 2))
-                return null;
+            if (attraction.LocationType == Model.Enums.LocationType.WithoutHours || attraction.OpenHours == null || attraction.OpenHours.Count() != 7 || attraction.OpenHours.Any(it => it.Count() != 2))
+                return Enumerable.Empty<((int hour, int minute) open, (int hour, int minute) close)>();
 
             (int hour, int minute) StringToHourAndMinute(string hhmmString)
             {
