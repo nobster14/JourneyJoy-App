@@ -150,7 +150,7 @@ namespace JourneyJoy.Backend.Controllers
                 Location = LocationDTO.ToDatabaseLocation(request.Location),
                 LocationType = request.LocationType,
                 Name = request.Name,
-                OpenHours = BaseObjectSerializer<DateTime[][]>.Serialize(request.OpenHours),
+                OpenHours = BaseObjectSerializer<int[][]>.Serialize(request.OpenHours),
                 Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices),
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,

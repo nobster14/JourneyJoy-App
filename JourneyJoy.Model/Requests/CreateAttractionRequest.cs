@@ -23,7 +23,7 @@ namespace JourneyJoy.Model.Requests
         /// <summary>
         /// Array 7x2(2 rows, 7 columns) for each date start and end hour in format ISO 8601
         /// </summary>
-        public DateTime[][] OpenHours { get; set; }
+        public int[][] OpenHours { get; set; }
         public double[] Prices { get; set; }
         public double TimeNeeded { get; set; }
     }
