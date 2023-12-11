@@ -113,8 +113,25 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
 
             var result = await response1.GetContent<TripDTO[]>();
             result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+
 
             var tripId = result.First().ID;
+
+            //Edytujemy wycieczkę
+            var editObj = GetCreateTripRequest();
+            editObj.Name = "edited name";
+            var editrequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/edit/{tripId}", HttpMethod.Post, editObj);
+            var editresponse = await HttpClient.SendAsync(editrequest);
+            editresponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Pobieramy wycieczkę
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("edited name");
 
             //Tworzymy atrakcję
             var createAttractionRequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest());
