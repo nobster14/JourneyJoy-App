@@ -41,6 +41,28 @@ namespace JourneyJoy.Backend.Controllers
         #endregion
 
         #region Get methods
+        // GET trips
+        /// <summary>
+        /// Get trips for user.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripDTO[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTrips([FromQuery] TakeSkipRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            if (user.UserTrips == null || user.UserTrips.Count == 0)
+                return Ok();
+
+            return Ok(this.repositoryWrapper.TripsRepository.GetByIds(user.UserTrips.Select(it => it.Id)).Select(it => TripDTO.FromDatabaseTrip(it)));
+        }
+
         // GET trips/attractions
         /// <summary>
         /// Get attractions from TripAdvisor.
@@ -186,6 +208,76 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
+        // POST trips/edit/{tripId}
+        /// <summary>
+        /// Edit trip.
+        /// </summary>
+        /// <param name="request">Edit request. If value in request is empty it will be not edited.</param>
+        /// <returns></returns>
+        [HttpPost("edit/{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditTrip(Guid tripId, [FromBody] CreateTripRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+
+            request.EditTripFromRequest(trip);
+
+            this.repositoryWrapper.TripsRepository.Update(trip);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
+        // POST trips/edit/{tripId}
+        /// <summary>
+        /// Edit attraction.
+        /// </summary>
+        /// <param name="request">Edit request. If value in request is empty it will be not edited. LocationType must be given.</param>
+        /// <returns></returns>
+        [HttpPost("edit/{tripId}/{attractionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditTrip(Guid tripId, Guid attractionId, [FromBody] CreateAttractionRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Attractions == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            var attractionToEdit = trip.Attractions.FirstOrDefault(attraction => attraction.Id == attractionId);
+            if (attractionToEdit == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            var attractionToEdit2 = this.repositoryWrapper.AttractionRepository.GetById(attractionId);
+            if (attractionToEdit2 == null)
+                return NotFound("Attraction not found in repository");
+
+            request.EditAttractionFromRequest(attractionToEdit2);
+
+            this.repositoryWrapper.AttractionRepository.Update(attractionToEdit2);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
         // POST trips/{tripId}
         /// <summary>
         /// Add attraction to trip.
@@ -232,31 +324,6 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
         #endregion
-
-        #region Get methods
-        // GET trips
-        /// <summary>
-        /// Get trips for user.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpGet()]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripDTO[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTrips([FromQuery] TakeSkipRequest request)
-        {
-            var userId = this.GetCallingUserId();
-            var user = this.repositoryWrapper.UserRepository.GetById(userId);
-            if (user == null)
-                return NotFound("User does not exists.");
-
-            if (user.UserTrips == null || user.UserTrips.Count == 0)
-                return Ok();
-
-            return Ok(this.repositoryWrapper.TripsRepository.GetByIds(user.UserTrips.Select(it => it.Id)).Select(it => TripDTO.FromDatabaseTrip(it)));
-        }
-        #endregion
-
 
         #region Remove methods
         // DELETE trips/{tripId}
