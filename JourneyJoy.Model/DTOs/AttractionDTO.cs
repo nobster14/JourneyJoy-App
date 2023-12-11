@@ -24,10 +24,10 @@ namespace JourneyJoy.Model.DTOs
 
         public LocationType LocationType { get; set; }
 
-        public DateTime[][] OpenHours { get; set; }
+        public string[][] OpenHours { get; set; }
         public double[] Prices { get; set; }
         public double TimeNeeded { get; set; }
-        public bool IfStartPoint { get; set; }
+        public bool IsStartPoint { get; set; }
         public static AttractionDTO FromDatabaseAttraction(Attraction attraction)
         {
             return new AttractionDTO()
@@ -41,7 +41,8 @@ namespace JourneyJoy.Model.DTOs
                 TimeNeeded = attraction.TimeNeeded,
                 TripID = attraction.Trip.Id,
                 Name = attraction.Name,
-                OpenHours = BaseObjectSerializer<DateTime[][]>.Deserialize(attraction.OpenHours),
+                OpenHours = BaseObjectSerializer<string[][]>.Deserialize(attraction.OpenHours),
+                IsStartPoint = attraction.IsStartPoint,
             };
         }
 
@@ -58,7 +59,8 @@ namespace JourneyJoy.Model.DTOs
                 TimeNeeded = attraction.TimeNeeded,
                 Trip = new Trip() { Id = attraction.TripID },
                 Name = attraction.Name,
-                OpenHours = BaseObjectSerializer<DateTime[][]>.Serialize(attraction.OpenHours),
+                OpenHours = BaseObjectSerializer<string[][]>.Serialize(attraction.OpenHours),
+                IsStartPoint = attraction.IsStartPoint, 
             };
         }
 

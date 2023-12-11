@@ -81,6 +81,69 @@ namespace JourneyJoy.Backend.Controllers
             return Ok(returnData);
         }
 
+        // GET trips/attractions/details/{tripAdvisorLocationId}
+        /// <summary>
+        /// Get details for attractionId from TripAdvisor (Służy do pobierania godzin otwarcia). (This request uses TripAdvisor APIKey limit(5000 request a month))
+        /// </summary>
+        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
+        /// <returns></returns>
+        [HttpGet("attractions/details/{tripAdvisorLocationId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorDetailsResponseDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTripAdvisorAttractionsDetails(string tripAdvisorLocationId)
+        {
+            var returnData = externalApiService.TripAdvisorAPI.GetDetailsForLocation(tripAdvisorLocationId).Result;
+
+            /// API jest wyłączone w konfiguracji
+            if (returnData == null)
+                return NotFound("API is disabled - contact with administrator.");
+
+            return Ok(returnData);
+        }
+
+        #endregion
+
+        #region Patch methods
+        /// <summary>
+        /// Set attraction as start point.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPatch("{tripId}/{attractionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult SetAttractionAsStartPoint(Guid tripId, Guid attractionId)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Attractions == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            var attractionToRemoveStartPoint = trip.Attractions.FirstOrDefault(attraction => attraction.IsStartPoint == true);
+            if (attractionToRemoveStartPoint != null)
+            {
+                attractionToRemoveStartPoint.IsStartPoint = false;
+                repositoryWrapper.AttractionRepository.Update(attractionToRemoveStartPoint);
+            }
+
+            var attractionToUpdate = trip.Attractions.FirstOrDefault(attraction => attraction.Id == attractionId);
+            if (attractionToUpdate == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            attractionToUpdate.IsStartPoint = true;
+            this.repositoryWrapper.AttractionRepository.Update(attractionToUpdate);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
         #endregion
 
         #region Post methods
@@ -248,11 +311,11 @@ namespace JourneyJoy.Backend.Controllers
                 return NotFound("Trip with given Id does not exists.");
 
             if (trip.Attractions == null)
-                return NotFound("Trip with calling Id not found in attraction list");
+                return NotFound("Attraction with calling Id not found in attraction list");
 
             var attractionToRemove = trip.Attractions.FirstOrDefault(attraction => attraction.Id == attractionId);
             if (attractionToRemove == null)
-                return NotFound("Trip with calling Id not found in attraction list");
+                return NotFound("Attraction with calling Id not found in attraction list");
 
             trip.Attractions.Remove(attractionToRemove);
             this.repositoryWrapper.TripsRepository.Update(trip);
