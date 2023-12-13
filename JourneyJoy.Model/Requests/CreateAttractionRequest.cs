@@ -50,8 +50,6 @@ namespace JourneyJoy.Model.Requests
                     attraction.Location.State = Location.State;
                 if (!Location.Street1.IsNullOrEmpty())
                     attraction.Location.Street1 = Location.Street1;
-                if (!Location.Street2.IsNullOrEmpty())
-                    attraction.Location.Street2 = Location.Street2;
                 if (!Location.Phone.IsNullOrEmpty())
                     attraction.Location.Phone = Location.Phone;
                 if (!Location.Postalcode.IsNullOrEmpty())

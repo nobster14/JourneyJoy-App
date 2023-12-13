@@ -310,6 +310,16 @@ namespace JourneyJoy.Backend.Controllers
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
             };
+            if (attraction.Location.Longitude == 0 && attraction.Location.Latitude == 0)
+            {
+                var googleResponse = externalApiService.GoogleMapsAPI.ConvertAdressToLatLong(attraction.Location.Street1, attraction.Location.Country, attraction.Location.City).Result;
+                if (googleResponse != null && googleResponse.Results != null && googleResponse.Results.Count() > 0)
+                {
+                    attraction.Location.Longitude = googleResponse.Results.First().Geometry.Location.Lng;
+                    attraction.Location.Latitude = googleResponse.Results.First().Geometry.Location.Lat;
+                }
+            }
+
 
             if (trip.Attractions == null)
                 trip.Attractions = new List<Attraction>() { attraction };
