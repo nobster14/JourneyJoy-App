@@ -73,16 +73,16 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
                 Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
             };
 
-            int[][] dateTimeArray = new int[7][];
+            string[][] dateTimeArray = new string[7][];
 
 
             for (int i = 0; i < 7; i++)
             {
-                dateTimeArray[i] = new int[2];
+                dateTimeArray[i] = new string[2];
                 for (int j = 0; j < 2; j++)
                 {
                     // Tak np. zapisujemy godzinę 19:00
-                    dateTimeArray[i][j] = 1900;
+                    dateTimeArray[i][j] = "1900";
                 }
             }
 

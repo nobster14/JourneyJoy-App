@@ -19,14 +19,14 @@ namespace JourneyJoy.Model.Requests
         public string? Description { get; set; }
         public string Photo { get; set; } = null!;
         public LocationDTO Location { get; set; } = null!;
-
+        public string? TripAdvisorLocationId { get; set; }
         public LocationType LocationType { get; set; }
 
         /// <summary>
         /// Array 7x2(2 rows, 7 columns) for each date start and end hour in format ISO 8601
         /// </summary>
-        public int[][] OpenHours { get; set; }
-        public double[] Prices { get; set; }
+        public string[][]? OpenHours { get; set; }
+        public double[]? Prices { get; set; }
         public double TimeNeeded { get; set; }
 
         public void EditAttractionFromRequest(Attraction attraction)

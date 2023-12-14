@@ -83,45 +83,49 @@ namespace JourneyJoy.Backend.Controllers
 
             return Ok(returnData);
         }
-        // GET trips/attractions/photos/{tripAdvisorLocationId}
-        /// <summary>
-        /// Get photos for attractionId from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
-        /// </summary>
-        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
-        /// <returns></returns>
-        [HttpGet("attractions/photos/{tripAdvisorLocationId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTripAdvisorAttractionsPhotos(string tripAdvisorLocationId)
-        {
-            var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
 
-            /// API jest wyłączone w konfiguracji
-            if (returnData == null)
-                return NotFound("API is disabled - contact with administrator.");
+        /*
+         Wyłączone - robimy wewnętrznie w metodzie do dodawania atrakcji
+         */
+        //// GET trips/attractions/photos/{tripAdvisorLocationId}
+        ///// <summary>
+        ///// Get photos for attractionId from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
+        ///// </summary>
+        ///// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
+        ///// <returns></returns>
+        //[HttpGet("attractions/photos/{tripAdvisorLocationId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public IActionResult GetTripAdvisorAttractionsPhotos(string tripAdvisorLocationId)
+        //{
+        //    var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
 
-            return Ok(returnData);
-        }
+        //    /// API jest wyłączone w konfiguracji
+        //    if (returnData == null)
+        //        return NotFound("API is disabled - contact with administrator.");
 
-        // GET trips/attractions/details/{tripAdvisorLocationId}
-        /// <summary>
-        /// Get details for attractionId from TripAdvisor (Służy do pobierania godzin otwarcia). (This request uses TripAdvisor APIKey limit(5000 request a month))
-        /// </summary>
-        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
-        /// <returns></returns>
-        [HttpGet("attractions/details/{tripAdvisorLocationId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorDetailsResponseDTO))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTripAdvisorAttractionsDetails(string tripAdvisorLocationId)
-        {
-            var returnData = externalApiService.TripAdvisorAPI.GetDetailsForLocation(tripAdvisorLocationId).Result;
+        //    return Ok(returnData);
+        //}
 
-            /// API jest wyłączone w konfiguracji
-            if (returnData == null)
-                return NotFound("API is disabled - contact with administrator.");
+        //// GET trips/attractions/details/{tripAdvisorLocationId}
+        ///// <summary>
+        ///// Get details for attractionId from TripAdvisor (Służy do pobierania godzin otwarcia). (This request uses TripAdvisor APIKey limit(5000 request a month))
+        ///// </summary>
+        ///// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
+        ///// <returns></returns>
+        //[HttpGet("attractions/details/{tripAdvisorLocationId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorDetailsResponseDTO))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public IActionResult GetTripAdvisorAttractionsDetails(string tripAdvisorLocationId)
+        //{
+        //    var returnData = externalApiService.TripAdvisorAPI.GetDetailsForLocation(tripAdvisorLocationId).Result;
 
-            return Ok(returnData);
-        }
+        //    /// API jest wyłączone w konfiguracji
+        //    if (returnData == null)
+        //        return NotFound("API is disabled - contact with administrator.");
+
+        //    return Ok(returnData);
+        //}
 
         #endregion
 
@@ -287,6 +291,7 @@ namespace JourneyJoy.Backend.Controllers
         [HttpPost("{tripId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AddAttractionToTrip(Guid tripId, [FromBody] CreateAttractionRequest request)
         {
             var userId = this.GetCallingUserId();
@@ -305,11 +310,25 @@ namespace JourneyJoy.Backend.Controllers
                 Location = LocationDTO.ToDatabaseLocation(request.Location),
                 LocationType = request.LocationType,
                 Name = request.Name,
-                OpenHours = BaseObjectSerializer<int[][]>.Serialize(request.OpenHours),
+                OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours),
                 Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices),
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
+                IsUrl = false,
             };
+
+            if (request.TripAdvisorLocationId != null)
+            {
+                var TripAdvisorDetailsResponse = externalApiService.TripAdvisorAPI.GetDetailsForLocation(request.TripAdvisorLocationId).Result;
+                var TripAdvisorPhotosResponse = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(request.TripAdvisorLocationId).Result;
+
+                attraction.Location.Latitude = TripAdvisorDetailsResponse.Latitude;
+                attraction.Location.Longitude = TripAdvisorDetailsResponse.Longitude;
+                attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
+                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Original.Url;
+                attraction.IsUrl = true;
+            }
+
             if (attraction.Location.Longitude == 0 && attraction.Location.Latitude == 0)
             {
                 var googleResponse = externalApiService.GoogleMapsAPI.ConvertAdressToLatLong(attraction.Location.Street1, attraction.Location.Country, attraction.Location.City).Result;
