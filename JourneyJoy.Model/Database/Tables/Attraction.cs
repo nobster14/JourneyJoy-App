@@ -23,6 +23,7 @@ namespace JourneyJoy.Model.Database.Tables
 
         public LocationType LocationType { get; set; }
 
+        public bool IsUrl { get; set; }
         public string OpenHours { get; set; }
         public string Prices { get; set; }
         public double TimeNeeded { get; set; }

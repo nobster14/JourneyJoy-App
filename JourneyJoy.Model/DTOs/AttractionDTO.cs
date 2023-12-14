@@ -28,6 +28,7 @@ namespace JourneyJoy.Model.DTOs
         public double[] Prices { get; set; }
         public double TimeNeeded { get; set; }
         public bool IsStartPoint { get; set; }
+        public bool IsUrl { get; set; }
         public static AttractionDTO FromDatabaseAttraction(Attraction attraction)
         {
             return new AttractionDTO()
@@ -43,6 +44,7 @@ namespace JourneyJoy.Model.DTOs
                 Name = attraction.Name,
                 OpenHours = BaseObjectSerializer<string[][]>.Deserialize(attraction.OpenHours),
                 IsStartPoint = attraction.IsStartPoint,
+                IsUrl = attraction.IsUrl,
             };
         }
 
@@ -60,7 +62,8 @@ namespace JourneyJoy.Model.DTOs
                 Trip = new Trip() { Id = attraction.TripID },
                 Name = attraction.Name,
                 OpenHours = BaseObjectSerializer<string[][]>.Serialize(attraction.OpenHours),
-                IsStartPoint = attraction.IsStartPoint, 
+                IsStartPoint = attraction.IsStartPoint,
+                IsUrl = attraction.IsUrl,
             };
         }
 
