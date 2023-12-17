@@ -41,6 +41,28 @@ namespace JourneyJoy.Backend.Controllers
         #endregion
 
         #region Get methods
+        // GET trips
+        /// <summary>
+        /// Get trips for user.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripDTO[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTrips([FromQuery] TakeSkipRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            if (user.UserTrips == null || user.UserTrips.Count == 0)
+                return Ok();
+
+            return Ok(this.repositoryWrapper.TripsRepository.GetByIds(user.UserTrips.Select(it => it.Id)).Select(it => TripDTO.FromDatabaseTrip(it)));
+        }
+
         // GET trips/attractions
         /// <summary>
         /// Get attractions from TripAdvisor.
@@ -61,45 +83,49 @@ namespace JourneyJoy.Backend.Controllers
 
             return Ok(returnData);
         }
-        // GET trips/attractions/photos/{tripAdvisorLocationId}
-        /// <summary>
-        /// Get photos for attractionId from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
-        /// </summary>
-        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
-        /// <returns></returns>
-        [HttpGet("attractions/photos/{tripAdvisorLocationId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTripAdvisorAttractionsPhotos(string tripAdvisorLocationId)
-        {
-            var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
 
-            /// API jest wyłączone w konfiguracji
-            if (returnData == null)
-                return NotFound("API is disabled - contact with administrator.");
+        /*
+         Wyłączone - robimy wewnętrznie w metodzie do dodawania atrakcji
+         */
+        //// GET trips/attractions/photos/{tripAdvisorLocationId}
+        ///// <summary>
+        ///// Get photos for attractionId from TripAdvisor. (This request uses TripAdvisor APIKey limit(5000 request a month))
+        ///// </summary>
+        ///// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
+        ///// <returns></returns>
+        //[HttpGet("attractions/photos/{tripAdvisorLocationId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorPhotoResponseDTO[]))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public IActionResult GetTripAdvisorAttractionsPhotos(string tripAdvisorLocationId)
+        //{
+        //    var returnData = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(tripAdvisorLocationId).Result;
 
-            return Ok(returnData);
-        }
+        //    /// API jest wyłączone w konfiguracji
+        //    if (returnData == null)
+        //        return NotFound("API is disabled - contact with administrator.");
 
-        // GET trips/attractions/details/{tripAdvisorLocationId}
-        /// <summary>
-        /// Get details for attractionId from TripAdvisor (Służy do pobierania godzin otwarcia). (This request uses TripAdvisor APIKey limit(5000 request a month))
-        /// </summary>
-        /// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
-        /// <returns></returns>
-        [HttpGet("attractions/details/{tripAdvisorLocationId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorDetailsResponseDTO))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTripAdvisorAttractionsDetails(string tripAdvisorLocationId)
-        {
-            var returnData = externalApiService.TripAdvisorAPI.GetDetailsForLocation(tripAdvisorLocationId).Result;
+        //    return Ok(returnData);
+        //}
 
-            /// API jest wyłączone w konfiguracji
-            if (returnData == null)
-                return NotFound("API is disabled - contact with administrator.");
+        //// GET trips/attractions/details/{tripAdvisorLocationId}
+        ///// <summary>
+        ///// Get details for attractionId from TripAdvisor (Służy do pobierania godzin otwarcia). (This request uses TripAdvisor APIKey limit(5000 request a month))
+        ///// </summary>
+        ///// <param name="tripAdvisorLocationId">Id of TripAdvisor Location</param>
+        ///// <returns></returns>
+        //[HttpGet("attractions/details/{tripAdvisorLocationId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripAdvisorDetailsResponseDTO))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public IActionResult GetTripAdvisorAttractionsDetails(string tripAdvisorLocationId)
+        //{
+        //    var returnData = externalApiService.TripAdvisorAPI.GetDetailsForLocation(tripAdvisorLocationId).Result;
 
-            return Ok(returnData);
-        }
+        //    /// API jest wyłączone w konfiguracji
+        //    if (returnData == null)
+        //        return NotFound("API is disabled - contact with administrator.");
+
+        //    return Ok(returnData);
+        //}
 
         #endregion
 
@@ -186,6 +212,76 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
+        // POST trips/edit/{tripId}
+        /// <summary>
+        /// Edit trip.
+        /// </summary>
+        /// <param name="request">Edit request. If value in request is empty it will be not edited.</param>
+        /// <returns></returns>
+        [HttpPost("edit/{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditTrip(Guid tripId, [FromBody] CreateTripRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+
+            request.EditTripFromRequest(trip);
+
+            this.repositoryWrapper.TripsRepository.Update(trip);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
+        // POST trips/edit/{tripId}
+        /// <summary>
+        /// Edit attraction.
+        /// </summary>
+        /// <param name="request">Edit request. If value in request is empty it will be not edited. LocationType must be given.</param>
+        /// <returns></returns>
+        [HttpPost("edit/{tripId}/{attractionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditTrip(Guid tripId, Guid attractionId, [FromBody] CreateAttractionRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Attractions == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            var attractionToEdit = trip.Attractions.FirstOrDefault(attraction => attraction.Id == attractionId);
+            if (attractionToEdit == null)
+                return NotFound("Attraction with calling Id not found in attraction list");
+
+            var attractionToEdit2 = this.repositoryWrapper.AttractionRepository.GetById(attractionId);
+            if (attractionToEdit2 == null)
+                return NotFound("Attraction not found in repository");
+
+            request.EditAttractionFromRequest(attractionToEdit2);
+
+            this.repositoryWrapper.AttractionRepository.Update(attractionToEdit2);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
         // POST trips/{tripId}
         /// <summary>
         /// Add attraction to trip.
@@ -195,6 +291,7 @@ namespace JourneyJoy.Backend.Controllers
         [HttpPost("{tripId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AddAttractionToTrip(Guid tripId, [FromBody] CreateAttractionRequest request)
         {
             var userId = this.GetCallingUserId();
@@ -213,11 +310,35 @@ namespace JourneyJoy.Backend.Controllers
                 Location = LocationDTO.ToDatabaseLocation(request.Location),
                 LocationType = request.LocationType,
                 Name = request.Name,
-                OpenHours = BaseObjectSerializer<int[][]>.Serialize(request.OpenHours),
+                OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours),
                 Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices),
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
+                IsUrl = false,
             };
+
+            if (request.TripAdvisorLocationId != null)
+            {
+                var TripAdvisorDetailsResponse = externalApiService.TripAdvisorAPI.GetDetailsForLocation(request.TripAdvisorLocationId).Result;
+                var TripAdvisorPhotosResponse = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(request.TripAdvisorLocationId).Result;
+
+                attraction.Location.Latitude = TripAdvisorDetailsResponse.Latitude;
+                attraction.Location.Longitude = TripAdvisorDetailsResponse.Longitude;
+                attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
+                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Original.Url;
+                attraction.IsUrl = true;
+            }
+
+            if (attraction.Location.Longitude == 0 && attraction.Location.Latitude == 0)
+            {
+                var googleResponse = externalApiService.GoogleMapsAPI.ConvertAdressToLatLong(attraction.Location.Street1, attraction.Location.Country, attraction.Location.City).Result;
+                if (googleResponse != null && googleResponse.Results != null && googleResponse.Results.Count() > 0)
+                {
+                    attraction.Location.Longitude = googleResponse.Results.First().Geometry.Location.Lng;
+                    attraction.Location.Latitude = googleResponse.Results.First().Geometry.Location.Lat;
+                }
+            }
+
 
             if (trip.Attractions == null)
                 trip.Attractions = new List<Attraction>() { attraction };
@@ -232,31 +353,6 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
         #endregion
-
-        #region Get methods
-        // GET trips
-        /// <summary>
-        /// Get trips for user.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpGet()]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TripDTO[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTrips([FromQuery] TakeSkipRequest request)
-        {
-            var userId = this.GetCallingUserId();
-            var user = this.repositoryWrapper.UserRepository.GetById(userId);
-            if (user == null)
-                return NotFound("User does not exists.");
-
-            if (user.UserTrips == null || user.UserTrips.Count == 0)
-                return Ok();
-
-            return Ok(this.repositoryWrapper.TripsRepository.GetByIds(user.UserTrips.Select(it => it.Id)).Select(it => TripDTO.FromDatabaseTrip(it)));
-        }
-        #endregion
-
 
         #region Remove methods
         // DELETE trips/{tripId}

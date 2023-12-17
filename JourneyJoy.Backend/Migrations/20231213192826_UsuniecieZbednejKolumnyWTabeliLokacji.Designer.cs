@@ -4,6 +4,7 @@ using JourneyJoy.Model.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JourneyJoy.Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231213192826_UsuniecieZbednejKolumnyWTabeliLokacji")]
+    partial class UsuniecieZbednejKolumnyWTabeliLokacji
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +36,6 @@ namespace JourneyJoy.Backend.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsStartPoint")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsUrl")
                         .HasColumnType("bit");
 
                     b.Property<int>("LocationType")

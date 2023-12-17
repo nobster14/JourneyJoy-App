@@ -73,16 +73,16 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
                 Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
             };
 
-            int[][] dateTimeArray = new int[7][];
+            string[][] dateTimeArray = new string[7][];
 
 
             for (int i = 0; i < 7; i++)
             {
-                dateTimeArray[i] = new int[2];
+                dateTimeArray[i] = new string[2];
                 for (int j = 0; j < 2; j++)
                 {
                     // Tak np. zapisujemy godzinę 19:00
-                    dateTimeArray[i][j] = 1900;
+                    dateTimeArray[i][j] = "1900";
                 }
             }
 
@@ -113,8 +113,25 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
 
             var result = await response1.GetContent<TripDTO[]>();
             result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+
 
             var tripId = result.First().ID;
+
+            //Edytujemy wycieczkę
+            var editObj = GetCreateTripRequest();
+            editObj.Name = "edited name";
+            var editrequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/edit/{tripId}", HttpMethod.Post, editObj);
+            var editresponse = await HttpClient.SendAsync(editrequest);
+            editresponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Pobieramy wycieczkę
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("edited name");
 
             //Tworzymy atrakcję
             var createAttractionRequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest());

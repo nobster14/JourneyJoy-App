@@ -96,6 +96,8 @@ namespace JourneyJoy.IntegrationTests.ExternalAPITests
             var response = await googleAPI.GetAddressForPlaceId(GooglePlaceId);
 
             response.Should().NotBeNull();
+
+            //var response2 = googleAPI.ConvertAdressToLatLong("Niska", "Polska", "Warszawa").Result.Results;
         }
 
         /// <summary>

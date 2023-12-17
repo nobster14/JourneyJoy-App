@@ -65,6 +65,22 @@ namespace JourneyJoy.ExternalAPI
 
             return ret;
         }
+
+        public async Task<GoogleMapsGeocodingResponseDTO> ConvertAdressToLatLong(string street, string country, string city)
+        {
+
+            var response = await MakeGETCall($"https://maps.googleapis.com/maps/api/geocode/json?address={street}%20{city}%20{country}&key={APIKey}");
+
+            /// API jest wyłączone w konfiguracji
+            if (response == null)
+                return null;
+
+            var deserializedResponse = JsonConvert.DeserializeObject<GoogleMapsGeocodingResponseDTO>(response.Content);
+
+
+
+            return deserializedResponse;
+        }
         #endregion
     }
 }
