@@ -13,8 +13,6 @@ namespace JourneyJoy.Algorithm.Models
     public class Population
     {
         private static int PopulationSize => 10;
-        private static Time StartTime => new(7, 0);
-        private static Time EndTime => new(23, 0);
         public static float BoredomFactor => 0.2f;
         public List<Genome> Individuals { get; set; }
 
@@ -28,7 +26,7 @@ namespace JourneyJoy.Algorithm.Models
         {
             for (int i = 0; i < PopulationSize; i++)
             {
-                Individuals.Add(new Genome(information, StartTime, EndTime, BoredomFactor));
+                Individuals.Add(new Genome(information, BoredomFactor));
 
             }
         }

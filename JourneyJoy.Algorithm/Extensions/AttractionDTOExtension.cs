@@ -1,8 +1,10 @@
-﻿using JourneyJoy.Algorithm.Models;
+﻿using JJAlgorithm.Models;
+using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,10 +17,27 @@ namespace JourneyJoy.Algorithm.Extensions
             return ((float)attraction.Location.Latitude, (float)attraction.Location.Longitude);
         }
 
-        public static bool CheckIfPossibleToVisit(this AttractionDTO attraction, DateTime time, int weekday)
+        /// <summary>
+        /// Zwraca informację czy atrakcję można odwiedzić o danej godzinie i wrócić do domu
+        /// </summary>
+        /// <param name="attraction"></param>
+        /// <returns></returns>
+        public static (bool ifPossible, Time EndTime) IfPossibleToVisit(this AttractionDTO attraction, Time arrivalTime, Time endOfDay, int weekday, int distanceToHome)
         {
-            //todo
-            return true;
+            (Time open, Time close) = attraction.GetOpenAndCloseHourForWeekday(weekday);
+
+            if (open == new Time() && close == new Time(24))
+                return (true, arrivalTime + (int)attraction.TimeNeeded);
+
+            var enterTime = arrivalTime <= open ? arrivalTime : open;
+            var exitTime = enterTime + (int)attraction.TimeNeeded;
+
+            if (exitTime <= close && exitTime + distanceToHome <= endOfDay)
+                return (true, exitTime);
+
+            return (false, exitTime);
+            
+            
         }
 
         /// <summary>
@@ -38,6 +57,28 @@ namespace JourneyJoy.Algorithm.Extensions
             }
 
             return attraction.OpenHours.Select(it => (StringToHourAndMinute(it[0]), StringToHourAndMinute(it[1])));
+        }
+
+        /// <summary>
+        /// Zwraca godziny otwarcia w podany dzień tygodnia
+        /// </summary>
+        /// <param name="attraction"></param>
+        /// <returns></returns>
+        public static (Time open, Time close) GetOpenAndCloseHourForWeekday(this AttractionDTO attraction, int weekday)
+        {
+            if (attraction.LocationType == Model.Enums.LocationType.WithoutHours || attraction.OpenHours == null || attraction.OpenHours.Count() != 7 || attraction.OpenHours.Any(it => it.Count() != 2))
+                return (new Time(), new Time(24));
+
+            (int hour, int minute) StringToHourAndMinute(string hhmmString)
+            {
+                return (Int32.Parse(hhmmString.Substring(0, 2)), Int32.Parse(hhmmString.Substring(2, 2)));
+            }
+
+            var open = StringToHourAndMinute(attraction.OpenHours[weekday][0]);
+            var close = StringToHourAndMinute(attraction.OpenHours[weekday][1]);
+
+            return (new Time(open.hour, open.minute), new Time(close.hour, close.minute));
+
         }
     }
 }

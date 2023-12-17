@@ -31,9 +31,37 @@ namespace JJAlgorithm.Models
 
         public void AddMinutes(int minutes)
         {
-            var newTime = TimeInMinutes + minutes;
-            Hour = (int)(newTime / 60);
-            Minute = newTime - Hour * 60;
+            var totalMinutes = TimeInMinutes + minutes;
+            Hour = (int)(totalMinutes / 60);
+            Minute = totalMinutes % 60;
+        }
+
+        public static Time operator +(Time time, int minutes)
+        {
+            int totalMinutes = time.TimeInMinutes + minutes;
+            int newHour = totalMinutes / 60;
+            int newMinute = totalMinutes % 60;
+
+            return new Time(newHour, newMinute);
+        }
+        public static bool operator ==(Time time1, Time time2)
+        {
+            return time1.Hour == time2.Hour && time1.Minute == time2.Minute;
+        }
+
+        public static bool operator !=(Time time1, Time time2)
+        {
+            return !(time1 == time2);
+        }
+
+        public static bool operator <=(Time time1, Time time2)
+        {
+            return time1.TimeInMinutes <= time2.TimeInMinutes;
+        }
+
+        public static bool operator >=(Time time1, Time time2)
+        {
+            return time1.TimeInMinutes >= time2.TimeInMinutes;
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using JJAlgorithm.Helpers;
 using JJAlgorithm.Models;
+using JourneyJoy.Algorithm.Extensions;
+using Microsoft.Extensions.Azure;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,35 +17,24 @@ namespace JourneyJoy.Algorithm.Models
         public bool[,] DayChoiceMatrix { get; set; }
         public List<int>[] DayOrder { get; set; }
         public List<int> MissedAttractions { get; set; }
-        public Time[] StartTime { get; set; }
-        public Time[] EndTime { get; set; }
 
         public Genome(int numberOfAttractions, int numberOfDays)
         {
             DayChoiceMatrix = new bool[numberOfAttractions, numberOfDays];
             DayOrder = new List<int>[numberOfDays];
 
-            StartTime = new Time[numberOfDays];
-            EndTime = new Time[numberOfDays];
-
             for (int i = 0; i < numberOfDays; i++)
             {
-                StartTime[i].Hour = 7;
-                EndTime[i].Hour = 23;
+                DayOrder[i] = new List<int>();
             }
         }
 
-        public Genome(AlgorithmInformation information, Time startHour, Time endHour, float boredomFactor)
+        public Genome(AlgorithmInformation information, float boredomFactor)
         {
             bool[] visited = new bool[information.NumberOfAttractions];
-
-            StartTime = new Time[information.NumberOfDays];
-            EndTime = new Time[information.NumberOfDays];
-
             for (int i = 0; i < information.NumberOfDays; i++)
             {
-                StartTime[i].Hour = 7;
-                EndTime[i].Hour = 23;
+                DayOrder[i] = new List<int>();
             }
 
             MissedAttractions = new();
@@ -58,7 +50,7 @@ namespace JourneyJoy.Algorithm.Models
 
         public void GenerateIndividualsDay(int dayNumber, AlgorithmInformation information, float boredomFactor)
         {
-            Time currentTime = StartTime[dayNumber];
+            Time currentTime = information.StartTime;
 
             Random random = new();
             bool nextMovePossible = true;
@@ -71,58 +63,79 @@ namespace JourneyJoy.Algorithm.Models
             {
                 if (random.NextDouble() < boredomFactor)
                 {
-                    // todo: powrót do domu, przejście do kolejnego dnia
+                    SaveDay(currentRoute, dayNumber);
                     return;
                 }
-                else
-                {
-                    var ret = GetRandomAttraction(information, currentLocation);
 
+               var (attraction, ifPossible, exitTime) = GetRandomAttraction(information, currentLocation, currentTime, (dayNumber + information.WeekdayAtStart) % 7);
+
+                if (!ifPossible)
+                {
+                    SaveDay(currentRoute, dayNumber);
+                    return;
                 }
+
+                currentTime = exitTime;
+                currentRoute.Add(attraction);
+                MissedAttractions.Remove(attraction);
+                currentLocation = attraction;
             }
         }
 
-        private (int attraction, bool ifPossible) GetRandomAttraction(AlgorithmInformation information, int currentLocation, Time currentTime)
+        private (int attraction, bool ifPossible, Time exitTime) GetRandomAttraction(AlgorithmInformation information, int currentLocation, Time currentTime, int weekday)
         {
-            List<(float dist, int index)> distances = new();
-            List<(double probability, int index)> probabilities = new();
+            MissedAttractions = MissedAttractions.OrderBy(neighbour => information.AdjustmentMatrix[currentLocation][neighbour]).ToList();
 
-            Random random = new();
+            List<(float probDistance, int index, Time endTime)> distances = CalculateNormalizedDistances(information, currentLocation, currentTime, weekday);
 
-            MissedAttractions.Sort(new DistanceComparer(information.AdjustmentMatrix[currentLocation]));
+            return ChooseRandomAttraction(distances);
+        }
+
+        private List<(float probDistance, int index, Time endTime)> CalculateNormalizedDistances(AlgorithmInformation information, int currentLocation, Time currentTime, int weekday)
+        {
+            List<(float probDistance, int index, Time endTime)> distances = new();
 
             int sum = 0;
 
             foreach (var neighbour in MissedAttractions)
             {
-                if (CheckIfMovePossible(currentLocation, neighbour, currentTime, information))
+                var distFromCurr = information.DistanceBetweenAttractions(currentLocation, neighbour);
+                var distToHome = information.DistanceToHome(neighbour);
+
+                var result = information.Attractions[neighbour].IfPossibleToVisit(currentTime + distFromCurr, information.EndTime, weekday, distToHome);
+
+                if (result.ifPossible)
                 {
-                    distances.Add((information.AdjustmentMatrix[currentLocation][neighbour] + sum, neighbour));
-                    sum += information.AdjustmentMatrix[currentLocation][neighbour];
-                }   
-            }
-
-            foreach (var dist in distances)
-            {
-                probabilities.Add((dist.dist / sum, dist.index));
-            }
-
-            var randomNumber = random.NextDouble();
-
-            for(int i = 0; i < probabilities.Count; i++)
-            {
-                if(randomNumber <= probabilities[i].probability)
-                {
-                    return (i, true);
+                    distances.Add((distFromCurr + sum, neighbour, result.EndTime));
+                    sum += distFromCurr;
                 }
             }
 
-            return (-1, false);
+            return distances.Select(item => (1 - item.probDistance / sum, item.index, item.endTime)).ToList();
         }
 
-        private bool CheckIfMovePossible(int from, int to, Time currentTime, AlgorithmInformation information)
+        private static (int attraction, bool ifPossible, Time exitTime) ChooseRandomAttraction(List<(float probDistance, int index, Time endTime)> distances)
         {
-            return true;
+            Random random = new();
+            var randomNumber = random.NextDouble();
+
+            for (int i = 0; i < distances.Count; i++)
+            {
+                if (randomNumber <= distances[i].probDistance)
+                {
+                    return (i, true, distances[i].endTime);
+                }
+            }
+
+            return (-1, false, new Time(23));
+        }
+
+        private void SaveDay(List<int> currentRoute, int daynumber)
+        {
+            DayOrder[daynumber] = currentRoute;
+
+            foreach(var attraction in currentRoute)
+                DayChoiceMatrix[attraction, daynumber] = true;
         }
     }
 }
