@@ -27,7 +27,6 @@ namespace JourneyJoy.Algorithm.Models
             for (int i = 0; i < PopulationSize; i++)
             {
                 Individuals.Add(new Genome(information, BoredomFactor));
-
             }
         }
 
