@@ -27,17 +27,20 @@ namespace JourneyJoy.Algorithm.Models
             {
                 DayOrder[i] = new List<int>();
             }
+            MissedAttractions = new List<int>();
         }
 
         public Genome(AlgorithmInformation information, float boredomFactor)
         {
-            bool[] visited = new bool[information.NumberOfAttractions];
+            MissedAttractions = new List<int>();
+            DayChoiceMatrix = new bool[information.NumberOfAttractions, information.NumberOfDays];
+            DayOrder = new List<int>[information.NumberOfDays];
+
             for (int i = 0; i < information.NumberOfDays; i++)
             {
                 DayOrder[i] = new List<int>();
             }
 
-            MissedAttractions = new();
             for (int i = 0; i < information.NumberOfAttractions; i++)
             {
                 if (i != information.StartPoint)
