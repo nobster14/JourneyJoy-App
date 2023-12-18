@@ -53,7 +53,7 @@ namespace JourneyJoy.Algorithm.Models
 
         public void GenerateIndividualsDay(int dayNumber, AlgorithmInformation information, float boredomFactor)
         {
-            Time currentTime = information.StartTime;
+            Time currentTime = AlgorithmInformation.StartTime;
 
             Random random = new();
             //bool nextMovePossible = true;
@@ -106,7 +106,7 @@ namespace JourneyJoy.Algorithm.Models
                 var distFromCurr = information.DistanceBetweenAttractions(currentLocation, neighbour);
                 var distToHome = information.DistanceToHome(neighbour);
 
-                var result = information.Attractions[neighbour].IfPossibleToVisit(currentTime + distFromCurr, information.EndTime, weekday, distToHome);
+                var result = information.Attractions[neighbour].IfPossibleToVisit(currentTime + distFromCurr, AlgorithmInformation.EndTime, weekday, distToHome);
 
                 if (result.ifPossible)
                 {

@@ -1,5 +1,6 @@
 ﻿using JJAlgorithm.Helpers;
 using JJAlgorithm.Models;
+using JourneyJoy.Algorithm.Algorithms;
 using JourneyJoy.Model.DTOs;
 using Microsoft.Identity.Client;
 using System;
@@ -12,23 +13,30 @@ namespace JourneyJoy.Algorithm.Models
 {
     public class Population
     {
-        private static int PopulationSize => 10;
+        public static int PopulationSize => 999;
         public static float BoredomFactor => 0.2f;
-        public List<Genome> Individuals { get; set; }
+        public List<(Genome individual, double fitnessValue)> Individuals { get; set; }
 
         public Population(AlgorithmInformation information)
         {
-            Individuals = new List<Genome>();
+            Individuals = new List<(Genome, double)>();
             GeneratePopulation(information);
         }
 
         public void GeneratePopulation(AlgorithmInformation information)
         {
+            FitnessFunction.CalculateMaximums(information);
             for (int i = 0; i < PopulationSize; i++)
             {
-                Individuals.Add(new Genome(information, BoredomFactor));
+                var individual = new Genome(information, BoredomFactor);
+                Individuals.Add((individual, FitnessFunction.CalculateResult(individual, information)));
             }
         }
+
+        //public (Population bestPopulation, Population secondPopulation, Population thirdPopulation) SplitPopulation()
+        //{
+        //    Individuals = Individuals.OrderByDescending(x => x.fitnessValue).ToList();
+        // }
 
     }
 }

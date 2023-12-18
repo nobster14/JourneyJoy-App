@@ -44,7 +44,14 @@ namespace JourneyJoy.Algorithm.Algorithms
             MaxNumberOfAttractions = information.NumberOfAttractions;
         }
 
-        public static double CalculateResult2(Genome genome, AlgorithmInformation information)
+        public static void CalculateMaximums(AlgorithmInformation information)
+        {
+            CalculateMaxCost(information);
+            CalculateMaxDistance(information);
+            SetMaxNumberOfAttractions(information);
+        }
+
+        public static double CalculateResult(Genome genome, AlgorithmInformation information)
         {
             int visitedAttractions = genome.DayOrder.Sum(day => day.Count);
 

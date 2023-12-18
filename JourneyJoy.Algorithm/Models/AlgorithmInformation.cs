@@ -16,8 +16,8 @@ namespace JourneyJoy.Algorithm.Models
         public List<AttractionDTO> Attractions { get; set; }
         public int NumberOfAttractions => Attractions.Count;
         public int WeekdayAtStart { get; set; }
-        public Time StartTime => new Time(7);
-        public Time EndTime => new Time(23);
+        public static Time StartTime => new(7);
+        public static Time EndTime => new(23);
 
         public AlgorithmInformation(List<AttractionDTO> attractions, int[][] adjustmentMatrix, int startPoint, int numberOfDays, int weekdayAtStart)
         {

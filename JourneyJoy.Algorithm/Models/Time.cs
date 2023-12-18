@@ -58,10 +58,17 @@ namespace JJAlgorithm.Models
         {
             return time1.TimeInMinutes <= time2.TimeInMinutes;
         }
-
         public static bool operator >=(Time time1, Time time2)
         {
             return time1.TimeInMinutes >= time2.TimeInMinutes;
+        }
+        public static bool operator <(Time time1, Time time2)
+        {
+            return time1.TimeInMinutes < time2.TimeInMinutes;
+        }
+        public static bool operator >(Time time1, Time time2)
+        {
+            return time1.TimeInMinutes > time2.TimeInMinutes;
         }
     }
 }

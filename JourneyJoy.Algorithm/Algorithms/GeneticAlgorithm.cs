@@ -15,7 +15,7 @@ namespace JourneyJoy.Algorithm.Algorithms
         {
             var basePopulation = new Population(information);
 
-            return basePopulation.Individuals[0].DayOrder;
+            return basePopulation.Individuals[0].individual.DayOrder;
         }
     }
 }
