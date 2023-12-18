@@ -56,13 +56,13 @@ namespace JourneyJoy.Algorithm.Models
             Time currentTime = information.StartTime;
 
             Random random = new();
-            bool nextMovePossible = true;
+            //bool nextMovePossible = true;
 
             int currentLocation = information.StartPoint;
 
             List<int> currentRoute = new();
 
-            while (nextMovePossible)
+            while (true)
             {
                 if (random.NextDouble() < boredomFactor)
                 {
@@ -78,10 +78,11 @@ namespace JourneyJoy.Algorithm.Models
                     return;
                 }
 
+                var index = MissedAttractions[attraction];
                 currentTime = exitTime;
-                currentRoute.Add(attraction);
-                MissedAttractions.Remove(attraction);
-                currentLocation = attraction;
+                currentRoute.Add(index);
+                MissedAttractions.Remove(index);
+                currentLocation = index;
             }
         }
 
@@ -109,12 +110,16 @@ namespace JourneyJoy.Algorithm.Models
 
                 if (result.ifPossible)
                 {
-                    distances.Add((distFromCurr + sum, neighbour, result.EndTime));
+                    distances.Add((distFromCurr, neighbour, result.EndTime));
                     sum += distFromCurr;
                 }
             }
+            if(distances.Count > 1)
+                distances = distances.Select(item => (1 - item.probDistance / sum, item.index, item.endTime)).ToList();
 
-            return distances.Select(item => (1 - item.probDistance / sum, item.index, item.endTime)).ToList();
+            var sumProb = distances.Sum(item => item.probDistance);
+            
+            return distances.Select(item => (item.probDistance / sumProb, item.index, item.endTime)).ToList();
         }
 
         private static (int attraction, bool ifPossible, Time exitTime) ChooseRandomAttraction(List<(float probDistance, int index, Time endTime)> distances)
@@ -122,12 +127,15 @@ namespace JourneyJoy.Algorithm.Models
             Random random = new();
             var randomNumber = random.NextDouble();
 
+            double currSum = 0;
+
             for (int i = 0; i < distances.Count; i++)
             {
-                if (randomNumber <= distances[i].probDistance)
+                if (randomNumber <= distances[i].probDistance + currSum)
                 {
                     return (i, true, distances[i].endTime);
                 }
+                currSum += distances[i].probDistance;
             }
 
             return (-1, false, new Time(23));

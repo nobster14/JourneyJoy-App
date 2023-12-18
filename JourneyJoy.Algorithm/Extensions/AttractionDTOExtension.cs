@@ -29,7 +29,7 @@ namespace JourneyJoy.Algorithm.Extensions
             if (open == new Time() && close == new Time(24))
                 return (true, arrivalTime + (int)attraction.TimeNeeded);
 
-            var enterTime = arrivalTime <= open ? arrivalTime : open;
+            var enterTime = arrivalTime <= open ? open : arrivalTime;
             var exitTime = enterTime + (int)attraction.TimeNeeded;
 
             if (exitTime <= close && exitTime + distanceToHome <= endOfDay)
