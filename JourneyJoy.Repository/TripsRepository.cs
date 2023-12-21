@@ -21,14 +21,14 @@ namespace JourneyJoy.Repository
         #region Interface methods
         public IEnumerable<Trip>? GetByIds(IEnumerable<Guid> id)
         {
-            return DatabaseContext.Trips.Include(it => it.Attractions).Include(it => it.User).Where(it => id.Contains(it.Id));
+            return DatabaseContext.Trips.Include(it => it.Attractions).Include(it => it.User).Include(it => it.Route).Where(it => id.Contains(it.Id));
         }
         #endregion
 
         #region Override methods
         public override Trip? GetById(Guid id)
         {
-            return DatabaseContext.Trips.Include(it => it.Attractions).Include(it => it.User).Where(it => id == it.Id).FirstOrDefault();
+            return DatabaseContext.Trips.Include(it => it.Attractions).Include(it => it.User).Include(it => it.Route).Where(it => id == it.Id).FirstOrDefault();
         }
         #endregion
     }

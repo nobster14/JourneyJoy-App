@@ -1,4 +1,5 @@
-﻿using JourneyJoy.Backend.Options;
+﻿using JourneyJoy.Algorithm.Algorithms;
+using JourneyJoy.Backend.Options;
 using JourneyJoy.Backend.Validation;
 using JourneyJoy.Contracts;
 using JourneyJoy.ExternalAPI;
@@ -43,7 +44,7 @@ namespace JourneyJoy.Backend.Controllers
         #region Get methods
         // GET trips
         /// <summary>
-        /// Get trips for user.
+        /// Get trips for user. Note dla Madzi: Jeżeli chodzi o trasę to na liście nie będzie atrakcji, która jest punktem startowym. Zakładamy, że po zakończeniu każdego dnia wracamy i wychodzimy z tego punktu.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -282,6 +283,55 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
+        // POST trips/route/{tripId}
+        /// <summary>
+        /// Create route for trip.
+        /// </summary>
+        /// <param name="request">Number of Days - długość wycieczki. StartDay - dzień tygodnia pierwszego dnia(0 - poniedziałek, 6-niedziela)</param>
+        /// <returns></returns>
+        [HttpPost("route/{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult  CreateRouteForTrip(Guid tripId, [FromBody] CreateRouteRequest request)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Attractions == null  || trip.Attractions.Count == 0)
+                return NotFound("There is no attractions to create route.");
+
+
+            var calculatedRoute = GeneticAlgorithm.FindBestRoute(new Algorithm.Models.AlgorithmInformation(
+                trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(),
+                externalApiService.GoogleMapsAPI.GetDistanceMatrixForAttraction(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it))).Result,
+                trip.Attractions.ToList().FindIndex(it => it.IsStartPoint == true),
+                request.NumberOfDays,
+                request.StartDay ));
+
+
+            var routeToSave = new Model.Database.Tables.Route()
+            {
+                SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(RouteDTO.CreateAttractionsInOrder(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(), calculatedRoute)),
+                StartDay = request.StartDay,
+            };
+
+            trip.Route = routeToSave;
+
+            this.repositoryWrapper.TripsRepository.Update(trip);
+            this.repositoryWrapper.Save();
+            
+            return Ok();
+        }
+
+
+
         // POST trips/{tripId}
         /// <summary>
         /// Add attraction to trip.
@@ -315,6 +365,7 @@ namespace JourneyJoy.Backend.Controllers
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
                 IsUrl = false,
+                IsStartPoint = request.IsStartPoint
             };
 
             if (request.TripAdvisorLocationId != null)

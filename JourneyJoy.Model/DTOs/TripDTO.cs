@@ -16,6 +16,9 @@ namespace JourneyJoy.Model.DTOs
         public string? Description { get; set; }
         public string? Picture { get; set; }
         public List<AttractionDTO> Attractions { get; set; }
+
+        public RouteDTO Route { get; set; } 
+
         public static TripDTO FromDatabaseTrip(Trip trip)
         {
             return new TripDTO()
@@ -25,8 +28,9 @@ namespace JourneyJoy.Model.DTOs
                 UserID = trip.User.Id.ToString(),
                 Attractions = trip.Attractions == null ? null : trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(),
                 Name = trip.Name,
-                Picture = trip.Photo
+                Picture = trip.Photo,
+                Route = trip.Route == null ? null : RouteDTO.FromDatabaseRoute(trip.Route),
             };
-        }
+        } 
     }
 }

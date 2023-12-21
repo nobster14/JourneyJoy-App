@@ -29,6 +29,8 @@ namespace JourneyJoy.Model.Requests
         public double[]? Prices { get; set; }
         public double TimeNeeded { get; set; }
 
+        public bool IsStartPoint { get; set; }
+
         public void EditAttractionFromRequest(Attraction attraction)
         {
             if (!Name.IsNullOrEmpty())
