@@ -35,7 +35,7 @@ namespace JourneyJoy.ExternalAPI
             return response;
         }
 
-        public async Task<DistanceTimeDTO[][]> GetDistanceMatrixForAttraction(IEnumerable<AttractionDTO> attractions)
+        public async Task<int[][]> GetDistanceMatrixForAttraction(IEnumerable<AttractionDTO> attractions)
         {
             var destinasionsOriginsString = attractions.Select(it => $"{it.Location.Latitude.ToString(CultureInfo.InvariantCulture)}%2C{it.Location.Longitude.ToString(CultureInfo.InvariantCulture)}").Aggregate((it1, it2) => $"{it1}%7C{it2}");
 
@@ -47,20 +47,16 @@ namespace JourneyJoy.ExternalAPI
 
             var deserializedResponse = JsonConvert.DeserializeObject<GoogleMapsDistanceMatrixReponseDTO>(response.Content);
 
-            var ret = new DistanceTimeDTO[attractions.Count()][];
+            var ret = new int[attractions.Count()][];
             for (int i = 0; i < attractions.Count(); i++)
-                ret[i] = new DistanceTimeDTO[attractions.Count()];
-            
+                ret[i] = new int[attractions.Count()];
+
             foreach (var i in Enumerable.Range(0, attractions.Count()))
                 foreach (var j in Enumerable.Range(0, attractions.Count()))
                 {
                     var actualElem = deserializedResponse.Rows[i].Elements[j];
 
-                    ret[i][j] = new DistanceTimeDTO()
-                    {
-                        Distance = actualElem.Distance.Value,
-                        Time = actualElem.Duration.Value,
-                    };
+                    ret[i][j] = actualElem.Duration.Value;
                 }
 
             return ret;

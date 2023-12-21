@@ -59,6 +59,12 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             Picture = "Trip picture"
         };
 
+        private CreateRouteRequest GetCreateRouteRequest() => new CreateRouteRequest()
+        {
+            NumberOfDays = 7,
+            StartDay = 0
+        };
+
         private CreateAttractionRequest GetCreateAttractionRequest()
         {
             var ret = new CreateAttractionRequest()
@@ -90,9 +96,166 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
 
             return ret;
         }
+
+        private CreateAttractionRequest GetCreateAttractionRequest1()
+        {
+            var ret = new CreateAttractionRequest()
+            {
+                Description = "trip description",
+                Name = "trip name",
+                Photo = "Trip picture",
+                Location = new LocationDTO()
+                {
+                    Address = "Koszykowa 75 Warszawa",
+                    City = "Warszawa",
+                    Street1 = "Koszykowa 75",
+                    Country = "Polska"
+                },
+                Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
+            };
+
+            string[][] dateTimeArray = new string[7][];
+
+
+            for (int i = 0; i < 7; i++)
+            {
+                dateTimeArray[i] = new string[2];
+
+                dateTimeArray[i][0] = "0000";
+                dateTimeArray[i][1] = "2400";
+            }
+
+            ret.OpenHours = dateTimeArray;
+
+            return ret;
+        }
+        private CreateAttractionRequest GetCreateAttractionRequest2()
+        {
+            var ret = new CreateAttractionRequest()
+            {
+                Description = "trip description",
+                Name = "trip name",
+                Photo = "Trip picture",
+                Location = new LocationDTO()
+                {
+                    Address = "Jana Pawła 2 137 Kraków",
+                    City = "Kraków",
+                    Street1 = "Jana Pawła II 137",
+                    Country = "Polska"
+                },
+                Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
+            };
+
+            string[][] dateTimeArray = new string[7][];
+
+
+            for (int i = 0; i < 7; i++)
+            {
+                dateTimeArray[i] = new string[2];
+
+                dateTimeArray[i][0] = "0000";
+                dateTimeArray[i][1] = "2400";
+            }
+
+            ret.OpenHours = dateTimeArray;
+
+            return ret;
+        }
+        private CreateAttractionRequest GetCreateAttractionRequest3()
+        {
+            var ret = new CreateAttractionRequest()
+            {
+                Description = "trip description",
+                Name = "trip name",
+                Photo = "Trip picture",
+                Location = new LocationDTO()
+                {
+                    Address = "Jana Pawła 2 51 Lublin",
+                    City = "Lublin",
+                    Street1 = "Jana Pawła II 51",
+                    Country = "Polska"
+                },
+                Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray(),
+                IsStartPoint = true
+
+            };
+
+            string[][] dateTimeArray = new string[7][];
+
+
+            for (int i = 0; i < 7; i++)
+            {
+                dateTimeArray[i] = new string[2];
+
+                dateTimeArray[i][0] = "0000";
+                dateTimeArray[i][1] = "2400";
+            }
+
+            ret.OpenHours = dateTimeArray;
+
+            return ret;
+        }
         #endregion
 
         #region Tests
+        /// <summary>
+        /// Testuje intergację modułu algorytmu z backendem
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task Test_AlgorithmEndpoint()
+        {
+            await SignIn(userEmail, userPassword, "users/login");
+
+            //Tworzymy wycieczkę
+            var request = RequestFactory.RequestMessageWithBody(TripsEndpoint, HttpMethod.Post, GetCreateTripRequest());
+            var response = await HttpClient.SendAsync(request);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Pobieramy wycieczkę
+            var response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+
+
+            var tripId = result.First().ID;
+
+
+            //Tworzymy atrakcje
+            var createAttractionRequest1 = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest1());
+            var createAttractionResponse1 = await HttpClient.SendAsync(createAttractionRequest1);
+            createAttractionResponse1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var createAttractionRequest2 = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest2());
+            var createAttractionResponse2 = await HttpClient.SendAsync(createAttractionRequest2);
+            createAttractionResponse2.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var createAttractionRequest3 = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/{tripId}", HttpMethod.Post, GetCreateAttractionRequest3());
+            var createAttractionResponse3 = await HttpClient.SendAsync(createAttractionRequest3);
+            createAttractionResponse3.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Akcja utworzenia trasy
+            var createRouteRequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/route/{tripId}", HttpMethod.Post, GetCreateRouteRequest());
+            var createRouteResponse = await HttpClient.SendAsync(createRouteRequest);
+            createRouteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+
+
+            //Pobieramy wycieczkę
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+
+        }
+
+
+
         /// <summary>
         /// Testuje metody POST, GET, REMOVE dla wycieczek oraz POST, REMOVE dla atrakcji
         /// </summary>
@@ -144,7 +307,7 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             result = await response1.GetContent<TripDTO[]>();
             result?.FirstOrDefault().Should().NotBeNull();
 
-            result.First().ID.Should().Be(tripId);    
+            result.First().ID.Should().Be(tripId);
             result.First().Attractions.Should().NotBeNull();
             result.First().Attractions.Count().Should().Be(1);
             var addedAttraction = result.First().Attractions.First();

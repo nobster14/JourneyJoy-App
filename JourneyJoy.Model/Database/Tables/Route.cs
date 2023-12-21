@@ -9,8 +9,9 @@ namespace JourneyJoy.Model.Database.Tables
     public record Route
     {
         public Guid Id { get; set; }
-        public IList<Route>? OrderedRoutes { get; set; }
-        public int DayLength { get; set; }
-        public double TripLength { get; set; }
+        public int StartDay { get; set; }
+
+        public string? SerializedAttractionsIds {  get; set; }
     }
+
 }

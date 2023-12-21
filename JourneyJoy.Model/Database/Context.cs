@@ -70,6 +70,12 @@ namespace JourneyJoy.Model.Database
 
             }
         }
+
+        private static void SetUpTripOwnershipOfRoute(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Trip>()
+                .OwnsOne(e => e.Route);
+        }
         #endregion  
     }
 }
