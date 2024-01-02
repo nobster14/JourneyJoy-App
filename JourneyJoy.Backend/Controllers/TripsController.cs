@@ -14,7 +14,9 @@ using JourneyJoy.Utils.Security.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
 
@@ -360,13 +362,17 @@ namespace JourneyJoy.Backend.Controllers
                 Location = LocationDTO.ToDatabaseLocation(request.Location),
                 LocationType = request.LocationType,
                 Name = request.Name,
-                OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours),
-                Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices),
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
                 IsUrl = false,
                 IsStartPoint = request.IsStartPoint
             };
+
+            if (request.TripAdvisorLocationId.IsNullOrEmpty())
+            {
+                attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours);
+                attraction.Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices);
+            }
 
             if (request.TripAdvisorLocationId != null)
             {
