@@ -371,7 +371,7 @@ namespace JourneyJoy.Backend.Controllers
             };
 
 
-            if (request.TripAdvisorLocationId != null)
+            if (!request.TripAdvisorLocationId.IsNullOrEmpty())
             {
                 var TripAdvisorDetailsResponse = externalApiService.TripAdvisorAPI.GetDetailsForLocation(request.TripAdvisorLocationId).Result;
                 var TripAdvisorPhotosResponse = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(request.TripAdvisorLocationId).Result;
