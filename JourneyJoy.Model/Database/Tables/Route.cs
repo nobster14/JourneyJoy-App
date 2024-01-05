@@ -10,7 +10,7 @@ namespace JourneyJoy.Model.Database.Tables
     {
         public Guid Id { get; set; }
         public int StartDay { get; set; }
-
+        public Guid StartPointAttractionId { get; set; }
         public string? SerializedAttractionsIds {  get; set; }
     }
 

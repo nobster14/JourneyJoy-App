@@ -322,6 +322,7 @@ namespace JourneyJoy.Backend.Controllers
             {
                 SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(RouteDTO.CreateAttractionsInOrder(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(), calculatedRoute)),
                 StartDay = request.StartDay,
+                StartPointAttractionId = trip.Attractions.First(it => it.IsStartPoint).Id
             };
 
             trip.Route = routeToSave;
