@@ -322,6 +322,7 @@ namespace JourneyJoy.Backend.Controllers
             {
                 SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(RouteDTO.CreateAttractionsInOrder(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(), calculatedRoute)),
                 StartDay = request.StartDay,
+                StartPointAttractionId = trip.Attractions.First(it => it.IsStartPoint).Id
             };
 
             trip.Route = routeToSave;
@@ -365,23 +366,21 @@ namespace JourneyJoy.Backend.Controllers
                 Photo = request.Photo,
                 TimeNeeded = request.TimeNeeded,
                 IsUrl = false,
-                IsStartPoint = request.IsStartPoint
+                IsStartPoint = request.IsStartPoint,
+                OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours),
+                Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices)
             };
 
-            if (request.TripAdvisorLocationId.IsNullOrEmpty())
-            {
-                attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(request.OpenHours);
-                attraction.Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices);
-            }
 
-            if (request.TripAdvisorLocationId != null)
+            if (!request.TripAdvisorLocationId.IsNullOrEmpty())
             {
                 var TripAdvisorDetailsResponse = externalApiService.TripAdvisorAPI.GetDetailsForLocation(request.TripAdvisorLocationId).Result;
                 var TripAdvisorPhotosResponse = externalApiService.TripAdvisorAPI.GetPhotoForTripAdvisorLocation(request.TripAdvisorLocationId).Result;
 
                 attraction.Location.Latitude = TripAdvisorDetailsResponse.Latitude;
                 attraction.Location.Longitude = TripAdvisorDetailsResponse.Longitude;
-                attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
+                if (TripAdvisorDetailsResponse.Hours != null)
+                    attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
                 attraction.Photo = TripAdvisorPhotosResponse.First().Images.Original.Url;
                 attraction.IsUrl = true;
             }
