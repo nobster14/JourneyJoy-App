@@ -47,14 +47,17 @@ namespace JourneyJoy.UnitTests.AlgorithmTests.Helpers
             foreach(var attr in day)
             {
                 var (open, close) = information.Attractions[attr].GetOpenAndCloseHourForWeekday(weekday);
-                var enterTime = currentTime <=  open ? open : currentTime;
 
+                currentTime += information.DistanceBetweenAttractions(currentLocation, attr);
+
+                var enterTime = currentTime <=  open ? open : currentTime;
                 var exitTime = enterTime + (int)information.Attractions[attr].TimeNeeded;
 
                 if (exitTime > close)
                     return false;
 
                 currentTime = exitTime;
+                currentLocation = attr;
             }
 
             if (currentTime > AlgorithmInformation.EndTime)

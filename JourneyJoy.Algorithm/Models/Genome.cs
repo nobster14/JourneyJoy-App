@@ -56,7 +56,6 @@ namespace JourneyJoy.Algorithm.Models
             Time currentTime = AlgorithmInformation.StartTime;
 
             Random random = new();
-            //bool nextMovePossible = true;
 
             int currentLocation = information.StartPoint;
 
@@ -78,11 +77,10 @@ namespace JourneyJoy.Algorithm.Models
                     return;
                 }
 
-                var index = MissedAttractions[attraction];
                 currentTime = exitTime;
-                currentRoute.Add(index);
-                MissedAttractions.Remove(index);
-                currentLocation = index;
+                currentRoute.Add(attraction);
+                MissedAttractions.Remove(attraction);
+                currentLocation = attraction;
             }
         }
 
@@ -112,6 +110,7 @@ namespace JourneyJoy.Algorithm.Models
                 {
                     distances.Add((distFromCurr, neighbour, result.EndTime));
                     sum += distFromCurr;
+                    currentTime = result.EndTime;
                 }
             }
             if(distances.Count > 1)
@@ -133,7 +132,7 @@ namespace JourneyJoy.Algorithm.Models
             {
                 if (randomNumber <= distances[i].probDistance + currSum)
                 {
-                    return (i, true, distances[i].endTime);
+                    return (distances[i].index, true, distances[i].endTime);
                 }
                 currSum += distances[i].probDistance;
             }
