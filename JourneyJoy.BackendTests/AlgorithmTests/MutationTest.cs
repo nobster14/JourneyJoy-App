@@ -1,8 +1,7 @@
 ﻿using JourneyJoy.Algorithm.Algorithms.GeneticOperators;
 using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
-using JourneyJoy.UnitTests.AlgorithmTests.Helpers;
-using JourneyJoy.Utils.Security.HashAlgorithms;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.UnitTests.AlgorithmTests
 {
-    public class GenomeTest
+    public class MutationTest
     {
         private AlgorithmInformation information;
 
@@ -33,14 +32,14 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
 
             for (int i = 0; i < 9; i++)
             {
-                for(int j = 0; j < 9; j++)
+                for (int j = 0; j < 9; j++)
                 {
                     adjustmentMatrix[i][j] *= 50;
                 }
             }
 
             int startPoint = 0;
-            int numberOfDays = 5;
+            int numberOfDays = 1;
             int weekdayAtStart = 0;
             AttractionDTO attraction1 = new()
             {
@@ -96,14 +95,23 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         }
 
         [Test]
-        public void CheckIfGenomeIsGeneratedProperly()
+        public void CheckIfOfOneAttractionMutationWorks()
         {
-            var genome = new Genome(information, 0.1f);
+            Genome parent1 = new Genome(information, 0.2f);
 
-            var ifValidated = Validator.Validate(genome, information);
+            var child = Mutation.ExecuteAttractionMutation(parent1);
 
-            genome.Should().NotBeNull();
-            ifValidated.Should().BeTrue();
+            child.Should().NotBeNull();
+        }
+
+        [Test]
+        public void CheckIfOfTwoAttractionsMutationWorks()
+        {
+            Genome parent1 = new Genome(information, 0.2f);
+
+            var child = Mutation.ExecuteTwoAttractionsMutation(parent1);
+
+            child.Should().NotBeNull();
         }
     }
-} 
+}
