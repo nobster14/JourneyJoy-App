@@ -251,7 +251,20 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             result = await response1.GetContent<TripDTO[]>();
             result?.FirstOrDefault().Should().NotBeNull();
             result.First().Name.Should().Be("trip name");
+            result.First().Route.Should().NotBeNull();
 
+            //Akcja usunięcia trasy
+            var deleteRouteResponse = await HttpClient.DeleteAsync($"{TripsEndpoint}/route/{tripId}");
+            deleteRouteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Pobieramy wycieczkę
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+            result.First().Route.Should().BeNull();
         }
 
 
