@@ -39,6 +39,7 @@ namespace JourneyJoy.Model.Database
             SetUpAttractionOwnershipOfLocation(modelBuilder);
             SetUpUserOwnershipOfTrip(modelBuilder);
             SetUpTripOwnershipOfAttraction(modelBuilder);
+            SetUpTripOwnershipOfRoute(modelBuilder);
         }
         #endregion
 
@@ -74,7 +75,9 @@ namespace JourneyJoy.Model.Database
         private static void SetUpTripOwnershipOfRoute(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Trip>()
-                .OwnsOne(e => e.Route);
+                .HasOne(e => e.Route)
+                .WithOne(e => e.Trip)
+                .OnDelete(DeleteBehavior.Cascade);
         }
         #endregion  
     }

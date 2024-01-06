@@ -4,6 +4,7 @@ using JourneyJoy.Model.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JourneyJoy.Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240106151536_ZmianaRelacjiRouteTrip")]
+    partial class ZmianaRelacjiRouteTrip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,32 +72,6 @@ namespace JourneyJoy.Backend.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Attractions");
-                });
-
-            modelBuilder.Entity("JourneyJoy.Model.Database.Tables.Route", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SerializedAttractionsIds")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StartDay")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("StartPointAttractionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TripId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TripId")
-                        .IsUnique();
-
-                    b.ToTable("Routes");
                 });
 
             modelBuilder.Entity("JourneyJoy.Model.Database.Tables.Trip", b =>
@@ -207,17 +184,6 @@ namespace JourneyJoy.Backend.Migrations
                     b.Navigation("Trip");
                 });
 
-            modelBuilder.Entity("JourneyJoy.Model.Database.Tables.Route", b =>
-                {
-                    b.HasOne("JourneyJoy.Model.Database.Tables.Trip", "Trip")
-                        .WithOne("Route")
-                        .HasForeignKey("JourneyJoy.Model.Database.Tables.Route", "TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Trip");
-                });
-
             modelBuilder.Entity("JourneyJoy.Model.Database.Tables.Trip", b =>
                 {
                     b.HasOne("JourneyJoy.Model.Database.Tables.User", "User")
@@ -226,14 +192,39 @@ namespace JourneyJoy.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("JourneyJoy.Model.Database.Tables.Route", "Route", b1 =>
+                        {
+                            b1.Property<Guid>("TripId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("SerializedAttractionsIds")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("StartDay")
+                                .HasColumnType("int");
+
+                            b1.Property<Guid>("StartPointAttractionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.HasKey("TripId");
+
+                            b1.ToTable("Routes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TripId");
+                        });
+
+                    b.Navigation("Route");
+
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("JourneyJoy.Model.Database.Tables.Trip", b =>
                 {
                     b.Navigation("Attractions");
-
-                    b.Navigation("Route");
                 });
 
             modelBuilder.Entity("JourneyJoy.Model.Database.Tables.User", b =>
