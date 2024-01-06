@@ -215,6 +215,38 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
+        // POST trips/editRoute/{tripId}
+        /// <summary>
+        /// Edit Route Order.
+        /// </summary>
+        /// <param name="request">.</param>
+        /// <returns></returns>
+        [HttpPost("editRoute/{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditRouteForTrip(Guid tripId, [FromBody] Guid[][] attractionsInOrder)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Route == null)
+                return NotFound("Route for trip does not exists");
+
+            trip.Route.SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(attractionsInOrder);
+
+            this.repositoryWrapper.RouteRepository.Update(trip.Route);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
         // POST trips/edit/{tripId}
         /// <summary>
         /// Edit trip.
@@ -309,20 +341,27 @@ namespace JourneyJoy.Backend.Controllers
             if (trip.Attractions == null  || trip.Attractions.Count == 0)
                 return NotFound("There is no attractions to create route.");
 
+            if (!trip.Attractions.Any(it => it.IsStartPoint == true))
+                return NotFound("There is no start point.");
+
+            if (trip.Attractions.Count < 3)
+                return NotFound("There has to be minimum 3 attractions to create a route.");
 
             var calculatedRoute = GeneticAlgorithm.FindBestRoute(new Algorithm.Models.AlgorithmInformation(
                 trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(),
                 externalApiService.GoogleMapsAPI.GetDistanceMatrixForAttraction(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it))).Result,
                 trip.Attractions.ToList().FindIndex(it => it.IsStartPoint == true),
                 request.NumberOfDays,
-                request.StartDay ));
+                request.StartDay));
 
 
             var routeToSave = new Model.Database.Tables.Route()
             {
                 SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(RouteDTO.CreateAttractionsInOrder(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(), calculatedRoute)),
                 StartDay = request.StartDay,
-                StartPointAttractionId = trip.Attractions.First(it => it.IsStartPoint).Id
+                StartPointAttractionId = trip.Attractions.First(it => it.IsStartPoint).Id,
+                TripId = trip.Id,
+                NumberOfDays = request.NumberOfDays,
             };
 
             trip.Route = routeToSave;
@@ -441,7 +480,7 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
-        // DELETE trips/{tripId}
+        // DELETE trips/{tripId}//{attractionId}
         /// <summary>
         /// Remove attraction from Trip.
         /// </summary>
@@ -477,6 +516,38 @@ namespace JourneyJoy.Backend.Controllers
                 return NotFound("Trip with calling Id not found");
 
             this.repositoryWrapper.AttractionRepository.Delete(attractionToRemove2);
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
+        // DELETE trips/route/{tripId}
+        /// <summary>
+        /// Remove route from trip.
+        /// </summary>
+        /// <param name="tripId">Trip Id of attraction</param>
+        /// <returns></returns>
+        [HttpDelete("route/{tripId}/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult RemoveRouteFromTrip(Guid tripId)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+            if (trip.Route == null)
+                return NotFound("Trip does not have a route.");
+
+            this.repositoryWrapper.RouteRepository.Delete(trip.Route);
+
+            trip.Route = null;
+
+            this.repositoryWrapper.TripsRepository.Update(trip);
             repositoryWrapper.Save();
 
             return Ok();
