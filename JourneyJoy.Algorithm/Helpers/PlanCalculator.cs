@@ -44,6 +44,7 @@ namespace JourneyJoy.Algorithm.Helpers
                 listForTheDay.Add((attr, enterTime, exitTime));
 
                 currentTime = exitTime;
+                currentLocation = attr;
             }
 
             return listForTheDay;

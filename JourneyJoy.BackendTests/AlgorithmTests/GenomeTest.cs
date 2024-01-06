@@ -1,4 +1,6 @@
-﻿using JourneyJoy.Algorithm.Models;
+﻿using Azure.Messaging.EventGrid.SystemEvents;
+using JourneyJoy.Algorithm.Helpers;
+using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
 using JourneyJoy.UnitTests.AlgorithmTests.Helpers;
 using JourneyJoy.Utils.Security.HashAlgorithms;
@@ -97,12 +99,17 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         [Test]
         public void CheckIfGenomeIsGeneratedProperly()
         {
-            var genome = new Genome(information, 0.1f);
+            for(int i = 0; i < 1000; i++)
+            {
+                var genome = new Genome(information, 0.1f);
 
-            var ifValidated = Validator.Validate(genome, information);
+                var ifValidated = Validator.Validate(genome, information);
+                var calcPlan = PlanCalculator.CalculatePlan(genome, information);
 
-            genome.Should().NotBeNull();
-            ifValidated.Should().BeTrue();
+                genome.Should().NotBeNull();
+                ifValidated.Should().BeTrue();
+
+            }
         }
     }
 } 

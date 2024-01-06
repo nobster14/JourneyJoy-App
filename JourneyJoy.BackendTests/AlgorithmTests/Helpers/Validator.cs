@@ -57,6 +57,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests.Helpers
                     return false;
 
                 currentTime = exitTime;
+                currentLocation = attr;
             }
 
             if (currentTime > AlgorithmInformation.EndTime)
