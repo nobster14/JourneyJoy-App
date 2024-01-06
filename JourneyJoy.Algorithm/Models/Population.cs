@@ -33,10 +33,5 @@ namespace JourneyJoy.Algorithm.Models
             }
         }
 
-        //public (Population bestPopulation, Population secondPopulation, Population thirdPopulation) SplitPopulation()
-        //{
-        //    Individuals = Individuals.OrderByDescending(x => x.fitnessValue).ToList();
-        // }
-
     }
 }
