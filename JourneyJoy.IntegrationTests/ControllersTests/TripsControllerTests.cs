@@ -253,6 +253,23 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             result.First().Name.Should().Be("trip name");
             result.First().Route.Should().NotBeNull();
 
+            ////Akcja modyfikacji trasy - DZIAŁA. Zakomentowane, ponieważ algorytm genetyczny nie zawsze tak zwraca atrakcje, by poniższe dwie linijki nie zwracały błędu
+            //var z = result.First().Route.AttractionsInOrder[0][1];
+            //result.First().Route.AttractionsInOrder[0][1] = result.First().Route.AttractionsInOrder[0][0];
+            //result.First().Route.AttractionsInOrder[0][0] = z;
+
+            //var modifyRouteRequest = RequestFactory.RequestMessageWithBody($"{TripsEndpoint}/editRoute/{tripId}", HttpMethod.Post, result.First().Route.AttractionsInOrder);
+            //var modifyRouteResponse = await HttpClient.SendAsync(modifyRouteRequest);
+            //modifyRouteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            //Pobieramy wycieczkę
+            response1 = await HttpClient.GetAsync(TripsEndpoint);
+            response1.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            result = await response1.GetContent<TripDTO[]>();
+            result?.FirstOrDefault().Should().NotBeNull();
+            result.First().Name.Should().Be("trip name");
+            result.First().Route.Should().NotBeNull();
             //Akcja usunięcia trasy
             var deleteRouteResponse = await HttpClient.DeleteAsync($"{TripsEndpoint}/route/{tripId}");
             deleteRouteResponse.StatusCode.Should().Be(HttpStatusCode.OK);

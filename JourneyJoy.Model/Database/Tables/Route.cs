@@ -14,6 +14,8 @@ namespace JourneyJoy.Model.Database.Tables
         public int StartDay { get; set; }
         public Guid StartPointAttractionId { get; set; }
         public string? SerializedAttractionsIds {  get; set; }
+
+        public int NumberOfDays { get; set; }
     }
 
 }

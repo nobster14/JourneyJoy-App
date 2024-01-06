@@ -215,6 +215,38 @@ namespace JourneyJoy.Backend.Controllers
             return Ok();
         }
 
+        // POST trips/editRoute/{tripId}
+        /// <summary>
+        /// Edit Route Order.
+        /// </summary>
+        /// <param name="request">.</param>
+        /// <returns></returns>
+        [HttpPost("editRoute/{tripId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult EditRouteForTrip(Guid tripId, [FromBody] Guid[][] attractionsInOrder)
+        {
+            var userId = this.GetCallingUserId();
+            var user = this.repositoryWrapper.UserRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User does not exists.");
+
+            var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
+            if (trip == null)
+                return NotFound("Trip with given Id does not exists.");
+
+            if (trip.Route == null)
+                return NotFound("Route for trip does not exists");
+
+            trip.Route.SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(attractionsInOrder);
+
+            this.repositoryWrapper.RouteRepository.Update(trip.Route);
+
+            repositoryWrapper.Save();
+
+            return Ok();
+        }
+
         // POST trips/edit/{tripId}
         /// <summary>
         /// Edit trip.
@@ -320,7 +352,7 @@ namespace JourneyJoy.Backend.Controllers
                 externalApiService.GoogleMapsAPI.GetDistanceMatrixForAttraction(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it))).Result,
                 trip.Attractions.ToList().FindIndex(it => it.IsStartPoint == true),
                 request.NumberOfDays,
-                request.StartDay ));
+                request.StartDay));
 
 
             var routeToSave = new Model.Database.Tables.Route()
@@ -328,7 +360,8 @@ namespace JourneyJoy.Backend.Controllers
                 SerializedAttractionsIds = BaseObjectSerializer<Guid[][]>.Serialize(RouteDTO.CreateAttractionsInOrder(trip.Attractions.Select(it => AttractionDTO.FromDatabaseAttraction(it)).ToList(), calculatedRoute)),
                 StartDay = request.StartDay,
                 StartPointAttractionId = trip.Attractions.First(it => it.IsStartPoint).Id,
-                TripId = trip.Id
+                TripId = trip.Id,
+                NumberOfDays = request.NumberOfDays,
             };
 
             trip.Route = routeToSave;
