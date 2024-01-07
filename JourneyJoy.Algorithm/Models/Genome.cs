@@ -1,5 +1,4 @@
-﻿using JJAlgorithm.Helpers;
-using JJAlgorithm.Models;
+﻿using JJAlgorithm.Models;
 using JourneyJoy.Algorithm.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Azure;

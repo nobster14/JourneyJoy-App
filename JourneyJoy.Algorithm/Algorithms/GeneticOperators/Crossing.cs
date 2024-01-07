@@ -1,4 +1,5 @@
 ﻿using JourneyJoy.Algorithm.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,6 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
     {
         public static (Genome child1, Genome child2) Execute(Genome parent1, Genome parent2)
         {
-            Random random = new();
-
             var parentChoice = GetRandomParentsOrder(parent1.NumberOfAttractions);
 
             var child1 = CreateChildFromParents(parent1, parent2, parentChoice);
@@ -45,6 +44,8 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
         private static void CopyDayOrder(Genome child, int i, int[] parentChoice, Genome parent1, Genome parent2)
         {
+            int beginningCnt = child.DayOrder[i].Count;
+
             List<int> attractions = new (child.DayOrder[i]);
             var attrCount = attractions.Count;
 
@@ -70,8 +71,10 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                 var indexes = GetRandomOrder(0, attrCount);
                 var parentOrder = new int[attrCount];
 
-                for (int j = 0; j < attrCount; j++)
-                    parentOrder[j] = parentTable[indexes[j]];
+                 for (int j = 0; j < attrCount; j++)
+                     parentOrder[j] = parentTable[indexes[j]];
+
+                var rand = new Random();
 
                 for (int j = 0; j < attrCount; j++)
                 {
@@ -81,8 +84,10 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                     if (parentOrder[j] == 0)
                         AddAttractionsFromParent(child.DayOrder[i], parent1.DayOrder[i], par1, ref iterator1);
                     else
-                        AddAttractionsFromParent(child.DayOrder[i], parent2.DayOrder[i], par2, ref iterator2);
+                       AddAttractionsFromParent(child.DayOrder[i], parent2.DayOrder[i], par2, ref iterator2);
                 }
+
+                int endCnt = child.DayOrder[i].Count;
             }
         }
 
@@ -98,7 +103,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                 {
                     childDayOrder.Add(currAttr);
                     selectedAttractions.Remove(currAttr);
-                    continue;
+                    break;
                 }
             }
         }
@@ -109,16 +114,16 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
             for (int i = 0; i < parentChoice.Length; i++)
             {
-                int index;
+                int index = -1;
+
                 if (parentChoice[i] == 0 && parent1.StartPoint != i)
                     index = parent1.GetDayIndexOfAttraction(i);
-                else
+                else if (parentChoice[i] == 1 && parent2.StartPoint != i)
                     index = parent2.GetDayIndexOfAttraction(i);
 
                 if (index != -1)
                 {
                     child.DayChoiceMatrix[i, index] = true;
-
                     child.DayOrder[index].Add(i);
                 }
             }
@@ -143,6 +148,5 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
             return parentChoice;
         }
-
     }
 }

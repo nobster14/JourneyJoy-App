@@ -10,6 +10,16 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 {
     public static class Mutation
     {
+        public static Genome Execute(Genome genome)
+        {
+            var rand = new Random();
+            
+             if (rand.NextDouble() < 0.5f)
+                return ExecuteAttractionMutation(genome);
+            else
+                return ExecuteTwoAttractionsMutation(genome);
+
+        }
         public static Genome ExecuteAttractionMutation(Genome genome)
         {
             var newGenome = new Genome(genome);
@@ -49,9 +59,9 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
             var dayAttr1 = genome.GetDayIndexOfAttraction(attraction1);
             var dayAttr2 = genome.GetDayIndexOfAttraction(attraction2);
-
+            
             var newGenome = new Genome(genome);
-
+            
             if(dayAttr1 != -1 && dayAttr2 != -1)
             {
                 SwitchAttractionsWhenExist(ref newGenome, attraction1, attraction2, dayAttr1, dayAttr2);

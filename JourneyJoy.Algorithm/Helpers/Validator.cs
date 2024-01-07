@@ -34,6 +34,18 @@ namespace JourneyJoy.Algorithm.Helpers
             return true;
         }
 
+        public static bool Validate(List<int>[] genome, AlgorithmInformation information)
+        {
+            int weekday = information.WeekdayAtStart;
+            foreach (var day in genome)
+            {
+                if (!ValidateDay(day, information, weekday))
+                    return false;
+                weekday = (weekday + 1) % 7;
+            }
+            return true;
+        }
+
         public static bool ValidateDay(List<int> day, AlgorithmInformation information, int weekday)
         {
             int currentLocation = information.StartPoint;

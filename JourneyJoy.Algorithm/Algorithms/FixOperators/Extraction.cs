@@ -24,6 +24,7 @@ namespace JourneyJoy.Algorithm.Algorithms.FixOperators
                 foreach (var item in itemsToRemove)
                 {
                     genome.MissedAttractions.Add(item);
+                    genome.DayChoiceMatrix[item, i] = false;
                 }
             }
         }

@@ -10,10 +10,10 @@ namespace JourneyJoy.Algorithm.Algorithms
 {
     public static class FitnessFunction
     {
-        public static double WeightVisitedAttractions => 0.4;
-        public static double WeightTotalDistance => 0.3;
-        public static double WeightTotalCost => 0.3;
-        public static double PenaltyFactor => 0.1;
+        public static double WeightVisitedAttractions => 0.3;
+        public static double WeightTotalDistance => 0.5;
+        public static double WeightTotalCost => 0.1;
+        public static double PenaltyFactor => 0.2;
 
         public static int MaxPossibleDistance { get; private set; }
         public static int MaxNumberOfAttractions { get; private set; }
@@ -74,7 +74,7 @@ namespace JourneyJoy.Algorithm.Algorithms
                 }
             }
 
-            double minVisitedAttractionsPenalty = Math.Max(0, MaxNumberOfAttractions / 2 - visitedAttractions);
+            double minVisitedAttractionsPenalty = Math.Max(0, MaxNumberOfAttractions - visitedAttractions);
 
             double normalizedVisitedAttractions = visitedAttractions / MaxNumberOfAttractions;
             double normalizedTotalDistance = 1.0 - (totalDistance / MaxPossibleDistance);
