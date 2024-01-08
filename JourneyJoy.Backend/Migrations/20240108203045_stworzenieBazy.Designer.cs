@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JourneyJoy.Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240106201739_zmianyv4")]
-    partial class zmianyv4
+    [Migration("20240108203045_stworzenieBazy")]
+    partial class stworzenieBazy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,7 +83,7 @@ namespace JourneyJoy.Backend.Migrations
                     b.Property<int>("NumberOfDays")
                         .HasColumnType("int");
 
-                    b.Property<string>("SerializedAttractionsIds")
+                    b.Property<string>("SerializedAttractions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StartDay")
