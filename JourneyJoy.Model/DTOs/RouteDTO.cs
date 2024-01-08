@@ -14,6 +14,7 @@ namespace JourneyJoy.Model.DTOs
         public int StartDay { get; set; }
         public Guid[][] AttractionsInOrder { get; set; }
 
+        public Guid StarePointAttractionId { get; set; }
 
         public static RouteDTO FromDatabaseRoute(Route route)
         {
@@ -21,7 +22,8 @@ namespace JourneyJoy.Model.DTOs
             {
                 StartDay = route.StartDay,
                 Id = route.Id,
-                AttractionsInOrder = BaseObjectSerializer<Guid[][]>.Deserialize(route.SerializedAttractionsIds)
+                AttractionsInOrder = BaseObjectSerializer<Guid[][]>.Deserialize(route.SerializedAttractionsIds),
+                StarePointAttractionId = route.StartPointAttractionId
             };
         }
 

@@ -16,6 +16,8 @@ namespace JourneyJoy.Repository
         private IUserRepository? userRepository;
         private ITripsRepository? tripsRepository;
         private IAttractionRepository attractionRepository;
+        private IRouteRepository routeRepository;
+
         #endregion
 
         #region Constructors
@@ -56,6 +58,17 @@ namespace JourneyJoy.Repository
                     attractionRepository = new AttractionRepository(databaseContext);
 
                 return attractionRepository;
+            }
+        }
+
+        public IRouteRepository RouteRepository
+        {
+            get
+            {
+                if (routeRepository == null)
+                    routeRepository = new RouteRepository(databaseContext);
+
+                return routeRepository;
             }
         }
 
