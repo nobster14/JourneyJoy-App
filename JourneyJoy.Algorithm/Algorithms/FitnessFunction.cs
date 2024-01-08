@@ -11,10 +11,10 @@ namespace JourneyJoy.Algorithm.Algorithms
     public static class FitnessFunction
     {
         #region Fields
-        private static double WeightVisitedAttractions => 0.3;
-        private static double WeightTotalDistance => 0.5;
-        private static double WeightTotalCost => 0.1;
-        private static double PenaltyFactor => 0.2;
+        public static double WeightVisitedAttractions => 0.3;
+        public static double WeightTotalDistance => 0.5;
+        public static double WeightTotalCost => 0.1;
+        public static double PenaltyFactor => 0.2;
 
         public static int MaxPossibleDistance { get; private set; }
         public static int MaxNumberOfAttractions { get; private set; }
@@ -44,7 +44,7 @@ namespace JourneyJoy.Algorithm.Algorithms
                 foreach (var attraction in genome.DayOrder[i])
                     totalCost += information.Attractions[attraction].Prices[(i + information.WeekdayAtStart) % 7];
 
-            double minVisitedAttractionsPenalty = Math.Max(0, MaxNumberOfAttractions - visitedAttractions);
+            double minVisitedAttractionsPenalty = Math.Max(0, MaxNumberOfAttractions - visitedAttractions - 1);
 
             double normalizedVisitedAttractions = visitedAttractions / MaxNumberOfAttractions;
             double normalizedTotalDistance = 1.0 - (totalDistance / MaxPossibleDistance);
@@ -57,6 +57,18 @@ namespace JourneyJoy.Algorithm.Algorithms
 
             return fitness;
         }
+
+        /// <summary>
+        /// Calculates maximum number of attractions, maximum distance and maximum cost.
+        /// </summary>
+        /// <param name="information"></param>
+        public static void CalculateMaximums(AlgorithmInformation information)
+        {
+            CalculateMaxCost(information);
+            CalculateMaxDistance(information);
+            SetMaxNumberOfAttractions(information);
+        }
+
         /// <summary>
         /// Calculates sum of all edges in specified graph.
         /// </summary>
@@ -92,17 +104,6 @@ namespace JourneyJoy.Algorithm.Algorithms
         public static void SetMaxNumberOfAttractions(AlgorithmInformation information)
         {
             MaxNumberOfAttractions = information.NumberOfAttractions;
-        }
-
-        /// <summary>
-        /// Calculates maximum number of attractions, maximum distance and maximum cost.
-        /// </summary>
-        /// <param name="information"></param>
-        public static void CalculateMaximums(AlgorithmInformation information)
-        {
-            CalculateMaxCost(information);
-            CalculateMaxDistance(information);
-            SetMaxNumberOfAttractions(information);
         }
 
         #endregion
