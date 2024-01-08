@@ -12,6 +12,11 @@ namespace JourneyJoy.Algorithm.Extensions
 {
     public static class AttractionDTOExtension
     {
+        /// <summary>
+        /// Gets langtitude and longtitude of an attraction.
+        /// </summary>
+        /// <param name="attraction"></param>
+        /// <returns></returns>
         public static (float Lat, float Lon) GetLanLon(this AttractionDTO attraction)
         {
             return ((float)attraction.Location.Latitude, (float)attraction.Location.Longitude);

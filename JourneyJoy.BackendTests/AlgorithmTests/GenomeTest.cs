@@ -2,7 +2,6 @@
 using JourneyJoy.Algorithm.Helpers;
 using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
-using JourneyJoy.UnitTests.AlgorithmTests.Helpers;
 using JourneyJoy.Utils.Security.HashAlgorithms;
 using System;
 using System.Collections.Generic;
@@ -104,7 +103,6 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
                 var genome = new Genome(information, 0.1f);
 
                 var ifValidated = Validator.Validate(genome, information);
-                var calcPlan = PlanCalculator.CalculatePlan(genome, information);
 
                 genome.Should().NotBeNull();
                 ifValidated.Should().BeTrue();

@@ -1,4 +1,5 @@
-﻿using JourneyJoy.Algorithm.Models;
+﻿using JourneyJoy.Algorithm.Algorithms.GeneticOperators;
+using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
 using Microsoft.VisualBasic;
 using System;
@@ -9,11 +10,10 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.UnitTests.AlgorithmTests
 {
-    public class PopulationTest
+    public class CrossingTest
     {
         private AlgorithmInformation information;
 
-        #region SETUP
         [SetUp]
         public void Setup()
         {
@@ -93,15 +93,17 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
 
             information = new AlgorithmInformation(list, adjustmentMatrix, startPoint, numberOfDays, weekdayAtStart);
         }
-        #endregion
 
-      //  [Test]
-      //  public void CheckIfPopulationGeneratesProperly()
-      //  {
-      //      var population = new Population(information, 100);
-      //
-      //     var populationSize = population.Individuals.Count;
-      //  }
+        [Test]
+        public void CheckIfCrossingWorks()
+        {
+            Genome parent1 = new Genome(information, 0.2f);
+            Genome parent2 = new Genome(information, 0.2f);
 
+            (var child1, var child2) = Crossing.Execute(parent1, parent2);
+
+            child1.Should().NotBeNull();
+            child2.Should().NotBeNull();
+        }
     }
 }

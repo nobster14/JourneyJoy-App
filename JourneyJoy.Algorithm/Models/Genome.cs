@@ -1,6 +1,6 @@
-﻿using JJAlgorithm.Helpers;
-using JJAlgorithm.Models;
+﻿using JJAlgorithm.Models;
 using JourneyJoy.Algorithm.Extensions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Azure;
 using Microsoft.VisualBasic;
 using System;
@@ -14,10 +14,16 @@ namespace JourneyJoy.Algorithm.Models
 {
     public class Genome
     {
+        #region Fields
         public bool[,] DayChoiceMatrix { get; set; }
         public List<int>[] DayOrder { get; set; }
         public List<int> MissedAttractions { get; set; }
+        public int NumberOfAttractions { get; set; }
+        public int NumberOfDays { get; set; }
+        public int StartPoint { get; set; }
+        #endregion
 
+        #region Constructors
         public Genome(int numberOfAttractions, int numberOfDays)
         {
             DayChoiceMatrix = new bool[numberOfAttractions, numberOfDays];
@@ -27,14 +33,22 @@ namespace JourneyJoy.Algorithm.Models
             {
                 DayOrder[i] = new List<int>();
             }
+
             MissedAttractions = new List<int>();
+            NumberOfAttractions = numberOfAttractions;
+            NumberOfDays = numberOfDays;
         }
 
         public Genome(AlgorithmInformation information, float boredomFactor)
         {
+            NumberOfAttractions = information.NumberOfAttractions;
+            NumberOfDays = information.NumberOfDays;
+
             MissedAttractions = new List<int>();
             DayChoiceMatrix = new bool[information.NumberOfAttractions, information.NumberOfDays];
             DayOrder = new List<int>[information.NumberOfDays];
+
+            StartPoint = information.StartPoint;
 
             for (int i = 0; i < information.NumberOfDays; i++)
             {
@@ -51,7 +65,32 @@ namespace JourneyJoy.Algorithm.Models
                 GenerateIndividualsDay(j, information, boredomFactor);
         }
 
-        public void GenerateIndividualsDay(int dayNumber, AlgorithmInformation information, float boredomFactor)
+        public Genome(Genome genome)
+        {
+            DayChoiceMatrix = genome.DayChoiceMatrix;
+            DayOrder = new List<int>[genome.NumberOfDays];
+
+            for (int i = 0; i < genome.NumberOfDays; i++)
+            {
+                DayOrder[i] = new List<int>(genome.DayOrder[i]);
+            }
+
+            MissedAttractions = new List<int>(genome.MissedAttractions);
+
+            NumberOfDays = genome.NumberOfDays;
+            NumberOfAttractions = genome.NumberOfAttractions;
+            StartPoint = genome.StartPoint;
+
+        }
+        #endregion
+
+        /// <summary>
+        /// Generates valid day for a genome.
+        /// </summary>
+        /// <param name="dayNumber"></param>
+        /// <param name="information"></param>
+        /// <param name="boredomFactor"></param>
+        private void GenerateIndividualsDay(int dayNumber, AlgorithmInformation information, float boredomFactor)
         {
             Time currentTime = AlgorithmInformation.StartTime;
 
@@ -84,6 +123,14 @@ namespace JourneyJoy.Algorithm.Models
             }
         }
 
+        /// <summary>
+        /// Returns random attraction from missed attractions.
+        /// </summary>
+        /// <param name="information"></param>
+        /// <param name="currentLocation"></param>
+        /// <param name="currentTime"></param>
+        /// <param name="weekday"></param>
+        /// <returns></returns>
         private (int attraction, bool ifPossible, Time exitTime) GetRandomAttraction(AlgorithmInformation information, int currentLocation, Time currentTime, int weekday)
         {
             MissedAttractions = MissedAttractions.OrderBy(neighbour => information.AdjustmentMatrix[currentLocation][neighbour]).ToList();
@@ -93,6 +140,14 @@ namespace JourneyJoy.Algorithm.Models
             return ChooseRandomAttraction(distances);
         }
 
+        /// <summary>
+        /// Calculates normalized distances to perform roulette wheel selection.
+        /// </summary>
+        /// <param name="information"></param>
+        /// <param name="currentLocation"></param>
+        /// <param name="currentTime"></param>
+        /// <param name="weekday"></param>
+        /// <returns></returns>
         private List<(float probDistance, int index, Time endTime)> CalculateNormalizedDistances(AlgorithmInformation information, int currentLocation, Time currentTime, int weekday)
         {
             List<(float probDistance, int index, Time endTime)> distances = new();
@@ -120,7 +175,11 @@ namespace JourneyJoy.Algorithm.Models
             
             return distances.Select(item => (item.probDistance / sumProb, item.index, item.endTime)).ToList();
         }
-
+        /// <summary>
+        /// Chooses ranom attraction with roulette wheel method.
+        /// </summary>
+        /// <param name="distances"></param>
+        /// <returns></returns>
         private static (int attraction, bool ifPossible, Time exitTime) ChooseRandomAttraction(List<(float probDistance, int index, Time endTime)> distances)
         {
             Random random = new();
@@ -140,12 +199,33 @@ namespace JourneyJoy.Algorithm.Models
             return (-1, false, new Time(23));
         }
 
+        /// <summary>
+        /// Saves day order.
+        /// </summary>
+        /// <param name="currentRoute"></param>
+        /// <param name="daynumber"></param>
         private void SaveDay(List<int> currentRoute, int daynumber)
         {
             DayOrder[daynumber] = currentRoute;
 
             foreach(var attraction in currentRoute)
                 DayChoiceMatrix[attraction, daynumber] = true;
+        }
+
+        /// <summary>
+        /// Returns index of day that an attraction is visited.
+        /// </summary>
+        /// <param name="attractionIndex"></param>
+        /// <returns></returns>
+        public int GetDayIndexOfAttraction(int attractionIndex)
+        {
+            for(int i = 0; i < NumberOfDays; i++)
+            {
+                if (DayChoiceMatrix[attractionIndex, i] == true)
+                    return i;
+            }
+
+            return -1;
         }
     }
 }

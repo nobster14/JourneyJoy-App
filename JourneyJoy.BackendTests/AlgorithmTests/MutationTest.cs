@@ -1,4 +1,5 @@
-﻿using JourneyJoy.Algorithm.Models;
+﻿using JourneyJoy.Algorithm.Algorithms.GeneticOperators;
+using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
 using Microsoft.VisualBasic;
 using System;
@@ -9,11 +10,10 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.UnitTests.AlgorithmTests
 {
-    public class PopulationTest
+    public class MutationTest
     {
         private AlgorithmInformation information;
 
-        #region SETUP
         [SetUp]
         public void Setup()
         {
@@ -39,7 +39,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
             }
 
             int startPoint = 0;
-            int numberOfDays = 5;
+            int numberOfDays = 1;
             int weekdayAtStart = 0;
             AttractionDTO attraction1 = new()
             {
@@ -93,15 +93,25 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
 
             information = new AlgorithmInformation(list, adjustmentMatrix, startPoint, numberOfDays, weekdayAtStart);
         }
-        #endregion
 
-      //  [Test]
-      //  public void CheckIfPopulationGeneratesProperly()
-      //  {
-      //      var population = new Population(information, 100);
-      //
-      //     var populationSize = population.Individuals.Count;
-      //  }
+        [Test]
+        public void CheckIfOfOneAttractionMutationWorks()
+        {
+            Genome parent1 = new Genome(information, 0.2f);
 
+            var child = Mutation.ExecuteAttractionMutation(parent1);
+
+            child.Should().NotBeNull();
+        }
+
+        [Test]
+        public void CheckIfOfTwoAttractionsMutationWorks()
+        {
+            Genome parent1 = new Genome(information, 0.2f);
+
+            var child = Mutation.ExecuteTwoAttractionsMutation(parent1);
+
+            child.Should().NotBeNull();
+        }
     }
 }
