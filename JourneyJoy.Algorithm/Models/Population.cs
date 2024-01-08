@@ -13,9 +13,11 @@ namespace JourneyJoy.Algorithm.Models
 {
     public class Population
     {
+        #region Fields
         public int PopulationSize { get; private set; }
         public static float BoredomFactor => 0.1f;
         public List<(Genome individual, double fitnessValue)> Individuals { get; set; }
+        #endregion
 
         public Population(AlgorithmInformation information, int populationSize)
         {
@@ -31,6 +33,10 @@ namespace JourneyJoy.Algorithm.Models
             PopulationSize = individuals.Count;
         }
 
+        /// <summary>
+        /// Generates population.
+        /// </summary>
+        /// <param name="information"></param>
         public void GeneratePopulation(AlgorithmInformation information)
         {
             FitnessFunction.CalculateMaximums(information);
@@ -41,6 +47,10 @@ namespace JourneyJoy.Algorithm.Models
             }
         }
 
+        /// <summary>
+        /// Divides population to two populations - one made of the best individuals and the second one of the rest.
+        /// </summary>
+        /// <returns></returns>
         public (Population bestPopulation, Population worstPopulation) DividePopulation()
         {
             Individuals = Individuals.OrderByDescending(ind => ind.fitnessValue).ToList();

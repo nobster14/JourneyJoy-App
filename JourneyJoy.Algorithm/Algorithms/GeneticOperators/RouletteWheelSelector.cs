@@ -9,6 +9,12 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 {
     public static class RouletteWheelSelector
     {
+        /// <summary>
+        /// Executes random wheel selection of evaluated individuals.
+        /// </summary>
+        /// <param name="numberOfIndividuals"></param>
+        /// <param name="individuals"></param>
+        /// <returns></returns>
         public static List<(Genome individual, double fitnessValue)> Execute(int numberOfIndividuals, List<(Genome individual, double fitnessValue)> individuals)
         {
             var random = new Random();

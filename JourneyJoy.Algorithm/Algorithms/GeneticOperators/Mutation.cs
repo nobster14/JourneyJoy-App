@@ -10,6 +10,12 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 {
     public static class Mutation
     {
+        #region Methods
+        /// <summary>
+        /// Executes mutation process. Chooses type of mutation - each with probability of 0.5.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <returns></returns>
         public static Genome Execute(Genome genome)
         {
             var rand = new Random();
@@ -20,6 +26,11 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                 return ExecuteTwoAttractionsMutation(genome);
 
         }
+        /// <summary>
+        /// Executes mutation of one attraction - it can be moved or removed.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <returns></returns>
         public static Genome ExecuteAttractionMutation(Genome genome)
         {
             var newGenome = new Genome(genome);
@@ -53,6 +64,11 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             return newGenome;
         }
 
+        /// <summary>
+        /// Executes mutation of two attractions - they will switch places.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <returns></returns>
         public static Genome ExecuteTwoAttractionsMutation(Genome genome)
         {
             (var attraction1, var attraction2) = ChooseTwoAttractionsToMutation(genome);
@@ -78,6 +94,13 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             return newGenome;
         }
         
+        /// <summary>
+        /// Switches places for two attractions when one is missed.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="attrExists"></param>
+        /// <param name="attrNotExists"></param>
+        /// <param name="dayAttr"></param>
         public static void SwitchAttractionsWhenDontExists(ref Genome genome, int attrExists, int attrNotExists, int dayAttr)
         {
             var attrPlace = genome.DayOrder[dayAttr].FindIndex(x => x == attrExists);
@@ -91,6 +114,14 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             genome.MissedAttractions.Add(attrExists);
         }
 
+        /// <summary>
+        /// Switches places of two attractions when neither of them is missed.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="attraction1"></param>
+        /// <param name="attraction2"></param>
+        /// <param name="dayAttr1"></param>
+        /// <param name="dayAttr2"></param>
         public static void SwitchAttractionsWhenExist(ref Genome genome, int attraction1, int attraction2, int dayAttr1, int dayAttr2)
         {
             var attrPlace1 = genome.DayOrder[dayAttr1].FindIndex(x => x == attraction1);
@@ -103,6 +134,11 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             genome.DayOrder[dayAttr2][attrPlace2] = attraction1;
         }
 
+        /// <summary>
+        /// Chooses attraction to mutate.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <returns></returns>
         public static int ChooseAttractionToMutation(Genome genome)
         {
             var random = new Random();
@@ -110,6 +146,11 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             return attractionToMutate == genome.StartPoint ? genome.NumberOfAttractions - 1 : attractionToMutate;
         }
 
+        /// <summary>
+        /// Chooses two attractions to mutate.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <returns></returns>
         public static (int attraction1, int attraction2) ChooseTwoAttractionsToMutation(Genome genome)
         {
             var attraction1 = ChooseAttractionToMutation(genome);
@@ -121,6 +162,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
             return (attraction1, attraction2);
         }
+        #endregion
     }
 
 }

@@ -12,6 +12,11 @@ namespace JourneyJoy.Algorithm.Algorithms.FixOperators
 {
     public static class Extraction
     {
+        /// <summary>
+        /// Executes process of extraction - returns valid genome.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="information"></param>
         public static void Execute(Genome genome, AlgorithmInformation information)
         {
             int weekday = information.WeekdayAtStart;
@@ -29,6 +34,13 @@ namespace JourneyJoy.Algorithm.Algorithms.FixOperators
             }
         }
 
+        /// <summary>
+        /// Executes day extraction - returns items that should be removed from route and these that should stay.
+        /// </summary>
+        /// <param name="information"></param>
+        /// <param name="day"></param>
+        /// <param name="weekday"></param>
+        /// <returns></returns>
         private static (List<int> itemsToLeave, List<int> itemsToRemove) ExecuteDay(AlgorithmInformation information, List<int> day, ref int weekday)
         {
             int currentLocation = information.StartPoint;
@@ -47,6 +59,16 @@ namespace JourneyJoy.Algorithm.Algorithms.FixOperators
             return(itemsToLeave, itemsToRemove);
         }
 
+        /// <summary>
+        /// Checks if attraction is possible to visit.
+        /// </summary>
+        /// <param name="information"></param>
+        /// <param name="attr"></param>
+        /// <param name="weekday"></param>
+        /// <param name="currentLocation"></param>
+        /// <param name="currentTime"></param>
+        /// <param name="itemsToLeave"></param>
+        /// <param name="itemsToRemove"></param>
         private static void ProcessAttraction(AlgorithmInformation information, int attr, int weekday, ref int currentLocation, ref Time currentTime, List<int> itemsToLeave, List<int> itemsToRemove)
         {
             var (open, close) = information.Attractions[attr].GetOpenAndCloseHourForWeekday(weekday);

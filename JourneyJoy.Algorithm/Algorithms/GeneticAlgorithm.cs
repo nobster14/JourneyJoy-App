@@ -11,9 +11,19 @@ namespace JourneyJoy.Algorithm.Algorithms
 {
     public static class GeneticAlgorithm
     {
+        #region Fields
         private static int StagnationFactor => 20;
         private static int PopulationSize => 100;
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Finds best route for list of attraction. Executes genetic algorithm outer loop.
+        /// </summary>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static List<int>[] FindBestRoute(AlgorithmInformation information)
         {
             var basePopulation = new Population(information, PopulationSize);
@@ -38,6 +48,13 @@ namespace JourneyJoy.Algorithm.Algorithms
             return bestPopulation.Individuals.First().individual.DayOrder;
         }
 
+        /// <summary>
+        /// Executes one step of genetic algorithm loop.
+        /// </summary>
+        /// <param name="bestPopulation"></param>
+        /// <param name="worstPopulation"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static bool ExecuteAlgorithmStep(ref Population bestPopulation, ref Population worstPopulation, AlgorithmInformation information)
         {
             bool ifBestIndividualChanged = false;
@@ -67,5 +84,6 @@ namespace JourneyJoy.Algorithm.Algorithms
             return ifBestIndividualChanged;
         }
 
+        #endregion
     }
 }

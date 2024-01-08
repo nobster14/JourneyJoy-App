@@ -11,6 +11,12 @@ namespace JourneyJoy.Algorithm.Helpers
 {
     public static class Validator
     {
+        /// <summary>
+        /// Validates genome.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static bool Validate(Genome genome, AlgorithmInformation information)
         {
             for (int i = 0; i < information.NumberOfAttractions; i++)
@@ -34,6 +40,12 @@ namespace JourneyJoy.Algorithm.Helpers
             return true;
         }
 
+        /// <summary>
+        /// Validates genome.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static bool Validate(List<int>[] genome, AlgorithmInformation information)
         {
             int weekday = information.WeekdayAtStart;
@@ -46,6 +58,13 @@ namespace JourneyJoy.Algorithm.Helpers
             return true;
         }
 
+        /// <summary>
+        /// Validates day.
+        /// </summary>
+        /// <param name="day"></param>
+        /// <param name="information"></param>
+        /// <param name="weekday"></param>
+        /// <returns></returns>
         public static bool ValidateDay(List<int> day, AlgorithmInformation information, int weekday)
         {
             int currentLocation = information.StartPoint;

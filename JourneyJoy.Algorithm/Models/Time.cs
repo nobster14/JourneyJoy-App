@@ -29,6 +29,10 @@ namespace JJAlgorithm.Models
             Minute = 0;
         }
 
+        /// <summary>
+        /// Adds time specified in minutes.
+        /// </summary>
+        /// <param name="minutes"></param>
         public void AddMinutes(int minutes)
         {
             var totalMinutes = TimeInMinutes + minutes;

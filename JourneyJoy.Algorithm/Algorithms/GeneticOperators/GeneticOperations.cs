@@ -11,9 +11,23 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 {
     public static class GeneticOperations
     {
-        public static float EliteProbabilityOfMutation => 0.1f;
-        public static float WorstProbabilityOfMutation => 0.3f;
-        public static float MixedProbabilityOfMutation => 0.2f;
+        #region Fields
+        private static float EliteProbabilityOfMutation => 0.1f;
+        private static float WorstProbabilityOfMutation => 0.3f;
+        private static float MixedProbabilityOfMutation => 0.2f;
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Generates 
+        /// (worstPopulation size + bestPopulation size)! 
+        /// / 
+        /// (2! * (worstPopulation size + bestPopulation size - 2)!) offsprings.
+        /// </summary>
+        /// <param name="bestPopulation"></param>
+        /// <param name="worstPopulation"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static List<(Genome individual, double fitnessValue)> GenerateOffsprings(List<(Genome individual, double fitnessValue)> bestPopulation, List<(Genome individual, double fitnessValue)> worstPopulation, AlgorithmInformation information)
         {
             var goodOffsprings = GeneratePureOffsprings(bestPopulation, EliteProbabilityOfMutation, information);
@@ -32,6 +46,13 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             return evaluatedOffsprings.OrderByDescending(ind => ind.fitnessValue).ToList();
         }
 
+        /// <summary>
+        /// Generates offsprings from parents from the same population.
+        /// </summary>
+        /// <param name="population"></param>
+        /// <param name="probabilityOfMutation"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static List<Genome> GeneratePureOffsprings(List<(Genome individual, double fitnessValue)> population, float probabilityOfMutation, AlgorithmInformation information)
         {
             var offsprings = new List<Genome>();
@@ -61,6 +82,13 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
             return offsprings;
         }
 
+        /// <summary>
+        /// Generates offsprings from parents from different populations.
+        /// </summary>
+        /// <param name="bestPopulation"></param>
+        /// <param name="worstPopulation"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static List<Genome> GenerateMixedOffsprings(List<(Genome individual, double fitnessValue)> bestPopulation, List<(Genome individual, double fitnessValue)> worstPopulation, AlgorithmInformation information)
         {
             var offsprings = new List<Genome>();
@@ -89,6 +117,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 
             return offsprings;
         }
+        #endregion
 
     }
 }
