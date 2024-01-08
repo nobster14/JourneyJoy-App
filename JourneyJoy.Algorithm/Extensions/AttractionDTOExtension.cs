@@ -27,7 +27,14 @@ namespace JourneyJoy.Algorithm.Extensions
             (Time open, Time close) = attraction.GetOpenAndCloseHourForWeekday(weekday);
 
             if (open == new Time() && close == new Time(24))
-                return (true, arrivalTime + (int)attraction.TimeNeeded);
+            {
+                var endTime = arrivalTime + (int)attraction.TimeNeeded;
+
+                if (endTime + distanceToHome <= endOfDay)
+                    return (true, endTime);
+                else
+                    return (false, endTime);
+            }
 
             var enterTime = arrivalTime <= open ? open : arrivalTime;
             var exitTime = enterTime + (int)attraction.TimeNeeded;
@@ -36,8 +43,7 @@ namespace JourneyJoy.Algorithm.Extensions
                 return (true, exitTime);
 
             return (false, exitTime);
-            
-            
+
         }
 
         /// <summary>

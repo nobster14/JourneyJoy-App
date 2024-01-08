@@ -1,8 +1,8 @@
-﻿using Azure.Messaging.EventGrid.SystemEvents;
+﻿using JourneyJoy.Algorithm.Algorithms.FixOperators;
+using JourneyJoy.Algorithm.Algorithms.GeneticOperators;
 using JourneyJoy.Algorithm.Helpers;
 using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
-using JourneyJoy.Utils.Security.HashAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace JourneyJoy.UnitTests.AlgorithmTests
 {
-    public class GenomeTest
+    public class ExtractionTest
     {
         private AlgorithmInformation information;
 
@@ -33,14 +33,14 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
 
             for (int i = 0; i < 9; i++)
             {
-                for(int j = 0; j < 9; j++)
+                for (int j = 0; j < 9; j++)
                 {
                     adjustmentMatrix[i][j] *= 50;
                 }
             }
 
             int startPoint = 0;
-            int numberOfDays = 5;
+            int numberOfDays = 3;
             int weekdayAtStart = 0;
             AttractionDTO attraction1 = new()
             {
@@ -52,9 +52,9 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
                 LocationType = Model.Enums.LocationType.WithHours,
                 OpenHours = new string[][]
                             {
-                                new string[] { "0800", "2000" },
-                                new string[] { "0800", "2000" },
-                                new string[] { "0800", "2000" },
+                                new string[] { "0800", "1000" },
+                                new string[] { "0800", "1500" },
+                                new string[] { "0800", "1400" },
                                 new string[] { "0800", "2000" },
                                 new string[] { "0800", "2000" },
                                 new string[] { "0800", "2000" },
@@ -72,9 +72,9 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
                                 new string[] { "0800", "2000" },
                                 new string[] { "0800", "2000" },
                                 new string[] { "0800", "2000" },
-                                new string[] { "0800", "2000" },
-                                new string[] { "0800", "2000" },
-                                new string[] { "0800", "2000" },
+                                new string[] { "0800", "1600" },
+                                new string[] { "0800", "1200" },
+                                new string[] { "0800", "1000" },
                             },
                 Prices = new double[] { 5, 5, 5, 5, 5, 5, 5 },
                 TimeNeeded = 60
@@ -96,18 +96,36 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         }
 
         [Test]
-        public void CheckIfGenomeIsGeneratedProperly()
+        public void CheckIfExtractionWorksProperly()
         {
-            for(int i = 0; i < 1000; i++)
+            for(int i = 0; i < 100; i++)
             {
-                var genome = new Genome(information, 0.1f);
+                var parent1 = new Genome(information, 0.1f);
+                var parent2 = new Genome(information, 0.1f);
 
-                var ifValidated = Validator.Validate(genome, information);
+                (var child1, var child2) = Crossing.Execute(parent1, parent2);
+            
+                var child3 = Mutation.ExecuteAttractionMutation(child1);
+                var child4 = Mutation.ExecuteTwoAttractionsMutation(child2);
 
-                genome.Should().NotBeNull();
-                ifValidated.Should().BeTrue();
+                if(!Validator.Validate(child3, information))
+                {
+                    Extraction.Execute(child3, information);
+                    var ifValid = Validator.Validate(child3, information);
 
+                    ifValid.Should().BeTrue();
+                }
+
+                if (!Validator.Validate(child4, information))
+                {
+                    Extraction.Execute(child4, information);
+                    var ifValid = Validator.Validate(child4, information);
+
+                    ifValid.Should().BeTrue();
+                }
             }
+
+
         }
     }
-} 
+}
