@@ -10,6 +10,7 @@ namespace JourneyJoy.Algorithm.Models
 {
     public class AlgorithmInformation
     {
+        #region Fields
         public int[][] AdjustmentMatrix { get; set; }
         public int StartPoint { get; set; }
         public int NumberOfDays { get; set; }
@@ -18,6 +19,7 @@ namespace JourneyJoy.Algorithm.Models
         public int WeekdayAtStart { get; set; }
         public static Time StartTime => new(7);
         public static Time EndTime => new(23);
+        #endregion
 
         public AlgorithmInformation(List<AttractionDTO> attractions, int[][] adjustmentMatrix, int startPoint, int numberOfDays, int weekdayAtStart)
         {
@@ -28,11 +30,22 @@ namespace JourneyJoy.Algorithm.Models
             WeekdayAtStart = weekdayAtStart;
         }
 
+        /// <summary>
+        /// Returns distance from attraction to home.
+        /// </summary>
+        /// <param name="attractionIndex"></param>
+        /// <returns></returns>
         public int DistanceToHome(int attractionIndex)
         {
             return AdjustmentMatrix[attractionIndex][StartPoint];
         }
 
+        /// <summary>
+        /// Return distance between two attractions.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         public int DistanceBetweenAttractions(int from, int to)
         {
             return AdjustmentMatrix[from][to];

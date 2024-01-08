@@ -8,6 +8,14 @@ namespace JourneyJoy.Algorithm.Algorithms
 {
     public static class Haversine
     {
+        /// <summary>
+        /// Calculates Haversine formula from two points on Earth.
+        /// </summary>
+        /// <param name="lat1"></param>
+        /// <param name="lon1"></param>
+        /// <param name="lat2"></param>
+        /// <param name="lon2"></param>
+        /// <returns></returns>
         public static float CalculateFormula(float lat1, float lon1, float lat2, float lon2)
         {
             const float r = 6378100;

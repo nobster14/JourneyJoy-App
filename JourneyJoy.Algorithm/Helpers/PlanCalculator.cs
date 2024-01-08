@@ -11,6 +11,12 @@ namespace JourneyJoy.Algorithm.Helpers
 {
     public static class PlanCalculator
     {
+        /// <summary>
+        /// Calculates plan of a route.
+        /// </summary>
+        /// <param name="genome"></param>
+        /// <param name="information"></param>
+        /// <returns></returns>
         public static List<(int attraction, Time enterTime, Time exitTime)>[] CalculatePlan(Genome genome, AlgorithmInformation information)
         {
             var calculatedPlan = new List<(int attraction, Time enterTime, Time exitTime)>[information.NumberOfDays];
@@ -25,6 +31,13 @@ namespace JourneyJoy.Algorithm.Helpers
             return calculatedPlan;
         }
 
+        /// <summary>
+        /// Calculates plan for a day.
+        /// </summary>
+        /// <param name="day"></param>
+        /// <param name="information"></param>
+        /// <param name="weekday"></param>
+        /// <returns></returns>
         public static List<(int attraction, Time enterTime, Time exitTime)> CalculateDay(List<int> day, AlgorithmInformation information, int weekday)
         {
             int currentLocation = information.StartPoint;

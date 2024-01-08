@@ -1,9 +1,9 @@
-﻿using JJAlgorithm.Helpers;
-using JJAlgorithm.Models;
+﻿using JJAlgorithm.Models;
 using JourneyJoy.Algorithm.Algorithms;
 using JourneyJoy.Model.DTOs;
 using Microsoft.Identity.Client;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,16 +13,30 @@ namespace JourneyJoy.Algorithm.Models
 {
     public class Population
     {
-        public static int PopulationSize => 999;
-        public static float BoredomFactor => 0.2f;
+        #region Fields
+        public int PopulationSize { get; private set; }
+        public static float BoredomFactor => 0.1f;
         public List<(Genome individual, double fitnessValue)> Individuals { get; set; }
+        #endregion
 
-        public Population(AlgorithmInformation information)
+        public Population(AlgorithmInformation information, int populationSize)
         {
+            PopulationSize = populationSize;
             Individuals = new List<(Genome, double)>();
+
             GeneratePopulation(information);
         }
 
+        public Population(List<(Genome individual, double fitnessValue)> individuals) 
+        {
+            Individuals = new List<(Genome individual, double fitnessValue)>(individuals);
+            PopulationSize = individuals.Count;
+        }
+
+        /// <summary>
+        /// Generates population.
+        /// </summary>
+        /// <param name="information"></param>
         public void GeneratePopulation(AlgorithmInformation information)
         {
             FitnessFunction.CalculateMaximums(information);
@@ -33,10 +47,21 @@ namespace JourneyJoy.Algorithm.Models
             }
         }
 
-        //public (Population bestPopulation, Population secondPopulation, Population thirdPopulation) SplitPopulation()
-        //{
-        //    Individuals = Individuals.OrderByDescending(x => x.fitnessValue).ToList();
-        // }
+        /// <summary>
+        /// Divides population to two populations - one made of the best individuals and the second one of the rest.
+        /// </summary>
+        /// <returns></returns>
+        public (Population bestPopulation, Population worstPopulation) DividePopulation()
+        {
+            Individuals = Individuals.OrderByDescending(ind => ind.fitnessValue).ToList();
+
+            int halfCount = PopulationSize / 2;
+
+            var bestIndividuals = Individuals.Take(halfCount).ToList();
+            var worstIndividuals = Individuals.Skip(halfCount).ToList();
+
+            return (new Population(bestIndividuals), new Population(worstIndividuals));
+        }
 
     }
 }

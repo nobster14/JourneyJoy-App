@@ -1,19 +1,21 @@
-﻿using JourneyJoy.Algorithm.Models;
+﻿using JourneyJoy.Algorithm.Algorithms;
+using JourneyJoy.Algorithm.Algorithms.GeneticOperators;
+using JourneyJoy.Algorithm.Helpers;
+using JourneyJoy.Algorithm.Models;
 using JourneyJoy.Model.DTOs;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace JourneyJoy.UnitTests.AlgorithmTests
 {
-    public class PopulationTest
+    public class AlgorithmTest
     {
         private AlgorithmInformation information;
 
-        #region SETUP
         [SetUp]
         public void Setup()
         {
@@ -39,7 +41,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
             }
 
             int startPoint = 0;
-            int numberOfDays = 5;
+            int numberOfDays = 2;
             int weekdayAtStart = 0;
             AttractionDTO attraction1 = new()
             {
@@ -93,15 +95,36 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
 
             information = new AlgorithmInformation(list, adjustmentMatrix, startPoint, numberOfDays, weekdayAtStart);
         }
-        #endregion
+        /*
+        [Test]
+        public void tescik()
+        {
+            var population = new Population(information, 100);
 
-      //  [Test]
-      //  public void CheckIfPopulationGeneratesProperly()
-      //  {
-      //      var population = new Population(information, 100);
-      //
-      //     var populationSize = population.Individuals.Count;
-      //  }
+            (var bestPopulation, var worstPopulation) = population.DividePopulation();
+
+            var ret = GeneticAlgorithm.test(bestPopulation, worstPopulation, information);
+
+            foreach(var item in ret)
+            {
+                var valid = Algorithm.Helpers.Validator.Validate(item.Item1, information);
+                valid.Should().BeTrue();
+            }
+            ret.Count.Should().Be(20);
+        }
+        */
+
+        [Test]
+        public void CheckIfAlgorithmWorks()
+        {
+            var bestRoute = GeneticAlgorithm.FindBestRoute(information);
+
+            var valid = Algorithm.Helpers.Validator.Validate(bestRoute, information);
+
+            valid.Should().BeTrue();
+
+            bestRoute.Should().NotBeNull();
+        }
 
     }
 }
