@@ -5,25 +5,24 @@
 namespace JourneyJoy.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class zmianyv4 : Migration
+    public partial class stworzenieBazy2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "NumberOfDays",
+            migrationBuilder.RenameColumn(
+                name: "SerializedAttractions",
                 table: "Routes",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+                newName: "SerializedAttractionsIds");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "NumberOfDays",
-                table: "Routes");
+            migrationBuilder.RenameColumn(
+                name: "SerializedAttractionsIds",
+                table: "Routes",
+                newName: "SerializedAttractions");
         }
     }
 }

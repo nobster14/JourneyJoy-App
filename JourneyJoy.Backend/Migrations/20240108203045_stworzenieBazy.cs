@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JourneyJoy.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class ZmianaRelacjiRouteTrip3 : Migration
+    public partial class stworzenieBazy : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,18 @@ namespace JourneyJoy.Backend.Migrations
             migrationBuilder.DropColumn(
                 name: "RouteId",
                 table: "Trips");
+
+            migrationBuilder.RenameColumn(
+                name: "SerializedAttractionsIds",
+                table: "Routes",
+                newName: "SerializedAttractions");
+
+            migrationBuilder.AddColumn<int>(
+                name: "NumberOfDays",
+                table: "Routes",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "TripId",
@@ -57,8 +69,17 @@ namespace JourneyJoy.Backend.Migrations
                 table: "Routes");
 
             migrationBuilder.DropColumn(
+                name: "NumberOfDays",
+                table: "Routes");
+
+            migrationBuilder.DropColumn(
                 name: "TripId",
                 table: "Routes");
+
+            migrationBuilder.RenameColumn(
+                name: "SerializedAttractions",
+                table: "Routes",
+                newName: "SerializedAttractionsIds");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "RouteId",

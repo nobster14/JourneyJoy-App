@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JourneyJoy.Backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240106160314_ZmianaRelacjiRouteTrip3")]
-    partial class ZmianaRelacjiRouteTrip3
+    [Migration("20240108203240_stworzenieBazy2")]
+    partial class stworzenieBazy2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,9 @@ namespace JourneyJoy.Backend.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NumberOfDays")
+                        .HasColumnType("int");
 
                     b.Property<string>("SerializedAttractionsIds")
                         .HasColumnType("nvarchar(max)");
