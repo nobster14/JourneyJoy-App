@@ -14,7 +14,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         private AlgorithmInformation information;
         private static int Size => 5;
 
-        private int GetMaxDist()
+        private static int GetMaxDist()
         {
             int tmp = 0;
             for (int i = 1; i < Size; i++)

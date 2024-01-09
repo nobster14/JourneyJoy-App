@@ -31,7 +31,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// </summary>
         /// <param name="genome"></param>
         /// <returns></returns>
-        public static Genome ExecuteAttractionMutation(Genome genome)
+        private static Genome ExecuteAttractionMutation(Genome genome)
         {
             var newGenome = new Genome(genome);
 
@@ -69,7 +69,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// </summary>
         /// <param name="genome"></param>
         /// <returns></returns>
-        public static Genome ExecuteTwoAttractionsMutation(Genome genome)
+        private static Genome ExecuteTwoAttractionsMutation(Genome genome)
         {
             (var attraction1, var attraction2) = ChooseTwoAttractionsToMutation(genome);
 
@@ -101,7 +101,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// <param name="attrExists"></param>
         /// <param name="attrNotExists"></param>
         /// <param name="dayAttr"></param>
-        public static void SwitchAttractionsWhenDontExists(ref Genome genome, int attrExists, int attrNotExists, int dayAttr)
+        private static void SwitchAttractionsWhenDontExists(ref Genome genome, int attrExists, int attrNotExists, int dayAttr)
         {
             var attrPlace = genome.DayOrder[dayAttr].FindIndex(x => x == attrExists);
 
@@ -122,7 +122,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// <param name="attraction2"></param>
         /// <param name="dayAttr1"></param>
         /// <param name="dayAttr2"></param>
-        public static void SwitchAttractionsWhenExist(ref Genome genome, int attraction1, int attraction2, int dayAttr1, int dayAttr2)
+        private static void SwitchAttractionsWhenExist(ref Genome genome, int attraction1, int attraction2, int dayAttr1, int dayAttr2)
         {
             var attrPlace1 = genome.DayOrder[dayAttr1].FindIndex(x => x == attraction1);
             var attrPlace2 = genome.DayOrder[dayAttr2].FindIndex(x => x == attraction2);
@@ -139,7 +139,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// </summary>
         /// <param name="genome"></param>
         /// <returns></returns>
-        public static int ChooseAttractionToMutation(Genome genome)
+        private static int ChooseAttractionToMutation(Genome genome)
         {
             var random = new Random();
             var attractionToMutate = random.Next(genome.NumberOfAttractions - 1);
@@ -151,7 +151,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// </summary>
         /// <param name="genome"></param>
         /// <returns></returns>
-        public static (int attraction1, int attraction2) ChooseTwoAttractionsToMutation(Genome genome)
+        private static (int attraction1, int attraction2) ChooseTwoAttractionsToMutation(Genome genome)
         {
             var attraction1 = ChooseAttractionToMutation(genome);
             var random = new Random();

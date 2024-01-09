@@ -1,5 +1,4 @@
-﻿using JourneyJoy.Algorithm.Algorithms.FixOperators;
-using JourneyJoy.Algorithm.Models;
+﻿using JourneyJoy.Algorithm.Models;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;

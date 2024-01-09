@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JourneyJoy.Algorithm.Algorithms.FixOperators
+namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
 {
     public static class Extraction
     {
@@ -56,7 +56,7 @@ namespace JourneyJoy.Algorithm.Algorithms.FixOperators
 
             weekday = (weekday + 1) % 7;
 
-            return(itemsToLeave, itemsToRemove);
+            return (itemsToLeave, itemsToRemove);
         }
 
         /// <summary>

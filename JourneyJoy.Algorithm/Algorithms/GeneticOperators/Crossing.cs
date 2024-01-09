@@ -131,9 +131,9 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                     int iterator2 = 0;
 
                     if (parentOrder[j] == 0)
-                        AddAttractionsFromParent(child.DayOrder[i], parent1.DayOrder[i], par1, ref iterator1);
+                        AddAttractionFromParent(child.DayOrder[i], parent1.DayOrder[i], par1, ref iterator1);
                     else
-                        AddAttractionsFromParent(child.DayOrder[i], parent2.DayOrder[i], par2, ref iterator2);
+                        AddAttractionFromParent(child.DayOrder[i], parent2.DayOrder[i], par2, ref iterator2);
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
         /// <param name="parentDayOrder"></param>
         /// <param name="selectedAttractions"></param>
         /// <param name="iterator"></param>
-        private static void AddAttractionsFromParent(List<int> childDayOrder, List<int> parentDayOrder, List<int> selectedAttractions, ref int iterator)
+        private static void AddAttractionFromParent(List<int> childDayOrder, List<int> parentDayOrder, List<int> selectedAttractions, ref int iterator)
         {
             while (iterator < parentDayOrder.Count)
             {

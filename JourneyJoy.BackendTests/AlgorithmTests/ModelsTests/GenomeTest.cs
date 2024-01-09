@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JourneyJoy.UnitTests.AlgorithmTests
+namespace JourneyJoy.UnitTests.AlgorithmTests.ModelsTests
 {
     public class GenomeTest
     {
@@ -26,7 +26,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         [Test]
         public void CheckIfGenomeIsGeneratedProperly()
         {
-            for(int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 var genome = new Genome(information, 0.1f);
 
@@ -38,4 +38,4 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
             }
         }
     }
-} 
+}
