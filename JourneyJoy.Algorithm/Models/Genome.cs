@@ -224,7 +224,6 @@ namespace JourneyJoy.Algorithm.Models
                 if (DayChoiceMatrix[attractionIndex, i] == true)
                     return i;
             }
-
             return -1;
         }
     }
