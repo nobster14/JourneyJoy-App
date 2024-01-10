@@ -91,9 +91,10 @@ namespace JourneyJoy.Algorithm.Algorithms
         /// <param name="information"></param>
         public static void CalculateMaxCost(AlgorithmInformation information)
         {
-            MaxCost = 0;
-            foreach(var attraction in information.Attractions)
-                MaxCost += attraction.Prices.Max();
+            MaxCost = 1;
+            foreach (var attraction in information.Attractions)
+                if (attraction.Prices != null && attraction.Prices.Length > 0)
+                    MaxCost += attraction.Prices.Max();
 
         }
 
