@@ -80,15 +80,24 @@ namespace JourneyJoy.Algorithm.Extensions
             if (attraction.LocationType == Model.Enums.LocationType.WithoutHours || attraction.OpenHours == null || attraction.OpenHours.Count() != 7 || attraction.OpenHours.Any(it => it.Count() != 2))
                 return (new Time(), new Time(24));
 
-            (int hour, int minute) StringToHourAndMinute(string hhmmString)
+
+                (int hour, int minute) StringToHourAndMinute(string hhmmString)
+                {
+                    return (Int32.Parse(hhmmString.Substring(0, 2)), Int32.Parse(hhmmString.Substring(2, 2)));
+                }
+
+
+            try
             {
-                return (Int32.Parse(hhmmString.Substring(0, 2)), Int32.Parse(hhmmString.Substring(2, 2)));
+                var open = StringToHourAndMinute(attraction.OpenHours[weekday][0]);
+                var close = StringToHourAndMinute(attraction.OpenHours[weekday][1]);
+
+                return (new Time(open.hour, open.minute), new Time(close.hour, close.minute));
             }
-
-            var open = StringToHourAndMinute(attraction.OpenHours[weekday][0]);
-            var close = StringToHourAndMinute(attraction.OpenHours[weekday][1]);
-
-            return (new Time(open.hour, open.minute), new Time(close.hour, close.minute));
+            catch
+            {
+                return (new Time(), new Time(24));
+            }
 
         }
     }
