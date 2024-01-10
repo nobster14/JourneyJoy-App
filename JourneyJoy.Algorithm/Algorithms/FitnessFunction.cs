@@ -42,7 +42,8 @@ namespace JourneyJoy.Algorithm.Algorithms
 
             for (int i = 0; i < genome.DayOrder.Length; i++)
                 foreach (var attraction in genome.DayOrder[i])
-                    totalCost += information.Attractions[attraction].Prices[(i + information.WeekdayAtStart) % 7];
+                    if (information.Attractions[attraction].Prices != null && information.Attractions[attraction].Prices.Length > 0)
+                        totalCost += information.Attractions[attraction].Prices[(i + information.WeekdayAtStart) % 7];
 
             double minVisitedAttractionsPenalty = Math.Max(0, MaxNumberOfAttractions - visitedAttractions - 1);
 
