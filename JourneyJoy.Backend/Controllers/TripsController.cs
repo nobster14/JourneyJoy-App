@@ -420,7 +420,7 @@ namespace JourneyJoy.Backend.Controllers
                 attraction.Location.Longitude = TripAdvisorDetailsResponse.Longitude;
                 if (TripAdvisorDetailsResponse.Hours != null)
                     attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
-                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Original.Url;
+                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Thumbnail.Url;
                 attraction.IsUrl = true;
             }
 
