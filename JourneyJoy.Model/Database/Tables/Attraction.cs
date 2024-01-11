@@ -14,7 +14,7 @@ namespace JourneyJoy.Model.Database.Tables
         public Trip Trip { get; set; }
         public Guid TripId { get; set; }
 
-        public string TripAdvisorId { get; set; }
+        public string? TripAdvisorId { get; set; }
 
         [MaxLength(200)]
         public string Name { get; set; } = null!;

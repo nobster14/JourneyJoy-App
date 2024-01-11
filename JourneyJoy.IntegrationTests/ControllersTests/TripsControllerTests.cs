@@ -25,7 +25,6 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
         private Guid userId;
         private string userEmail = null!;
         private string userPassword = null!;
-        private string attractionAdress = "attraction test adress";
         protected const string TripsEndpoint = "trips";
         #endregion
 
@@ -74,7 +73,10 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
                 Photo = "Trip picture",
                 Location = new LocationDTO()
                 {
-                    Address = attractionAdress
+                    Address = "Koszykowa 75 Warszawa",
+                    City = "Warszawa",
+                    Street1 = "Koszykowa 75",
+                    Country = "Polska"
                 },
                 Prices = Enumerable.Range(0, 7).Select(it => (double)it).ToArray()
             };
@@ -342,7 +344,7 @@ namespace JourneyJoy.IntegrationTests.ControllersTests
             result.First().Attractions.Count().Should().Be(1);
             var addedAttraction = result.First().Attractions.First();
             addedAttraction.Location.Should().NotBeNull();
-            addedAttraction.Location.Address.Should().Be(attractionAdress);
+            addedAttraction.Location.Address.Should().Be("Koszykowa 75 Warszawa");
             addedAttraction.OpenHours.Should().NotBeNull();
             addedAttraction.OpenHours.Count().Should().Be(7);
             addedAttraction.OpenHours[0].Count().Should().Be(2);
