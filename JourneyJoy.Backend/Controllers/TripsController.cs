@@ -384,6 +384,7 @@ namespace JourneyJoy.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public IActionResult AddAttractionToTrip(Guid tripId, [FromBody] CreateAttractionRequest request)
         {
             var userId = this.GetCallingUserId();
@@ -394,6 +395,9 @@ namespace JourneyJoy.Backend.Controllers
             var trip = this.repositoryWrapper.TripsRepository.GetById(tripId);
             if (trip == null)
                 return NotFound("Trip with given Id does not exists.");
+
+            if (!request.TripAdvisorLocationId.IsNullOrEmpty() && trip.Attractions != null && trip.Attractions.Any(it => it.TripAdvisorId == request.TripAdvisorLocationId))
+                return Conflict("Attraction with given TripAdvisor id already exists in this trip.");
 
             var attraction = new Attraction()
             {
@@ -410,7 +414,6 @@ namespace JourneyJoy.Backend.Controllers
                 Prices = BaseObjectSerializer<double[]>.Serialize(request.Prices)
             };
 
-
             if (!request.TripAdvisorLocationId.IsNullOrEmpty())
             {
                 var TripAdvisorDetailsResponse = externalApiService.TripAdvisorAPI.GetDetailsForLocation(request.TripAdvisorLocationId).Result;
@@ -419,9 +422,17 @@ namespace JourneyJoy.Backend.Controllers
                 attraction.Location.Latitude = TripAdvisorDetailsResponse.Latitude;
                 attraction.Location.Longitude = TripAdvisorDetailsResponse.Longitude;
                 if (TripAdvisorDetailsResponse.Hours != null)
-                    attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(TripAdvisorDetailsResponse.Hours.Periods.OrderBy(it => it.Open.Day).Select(it => new string[] { it.Open.Time, it.Close.Time }).ToArray());
-                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Thumbnail.Url;
+                    attraction.OpenHours = BaseObjectSerializer<string[][]>.Serialize(Enumerable.Range(1, 7).Select(ind =>
+                    {
+                        var period = TripAdvisorDetailsResponse.Hours.Periods.FirstOrDefault(it => it.Open.Day == ind);
+                        if (period != null)
+                            return new string[] { period.Open.Time, period.Close.Time };
+                        else
+                            return new string[] { "0000", "0000" };
+                    }).ToArray());
+                attraction.Photo = TripAdvisorPhotosResponse.First().Images.Small.Url;
                 attraction.IsUrl = true;
+                attraction.TripAdvisorId = request.TripAdvisorLocationId;
             }
 
             if (attraction.Location.Longitude == 0 && attraction.Location.Latitude == 0)
@@ -432,6 +443,8 @@ namespace JourneyJoy.Backend.Controllers
                     attraction.Location.Longitude = googleResponse.Results.First().Geometry.Location.Lng;
                     attraction.Location.Latitude = googleResponse.Results.First().Geometry.Location.Lat;
                 }
+                else
+                    return BadRequest("Couldn't find Longitude and Latitude for the given Adress");
             }
 
 
