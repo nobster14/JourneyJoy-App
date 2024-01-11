@@ -444,7 +444,7 @@ namespace JourneyJoy.Backend.Controllers
                     attraction.Location.Latitude = googleResponse.Results.First().Geometry.Location.Lat;
                 }
                 else
-                    return BadRequest("Couldn't find Longitude and Latitude for the given Adress");
+                    return BadRequest("Couldn't find Longitude and Latitude for the given Address");
             }
 
 
