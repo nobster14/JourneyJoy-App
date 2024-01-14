@@ -42,9 +42,8 @@ namespace JourneyJoy.Backend.Validation
             if (!req.Email.IsNullOrEmpty())
                 if (!validationService.EmailValidator.Validate(req.Email, out var error1))
                     stringBuilder.AppendLine(error1);
-            if (!req.Password.IsNullOrEmpty())
-                if (!validationService.PasswordValidator.Validate(req.Password, out var error2))
-                    stringBuilder.AppendLine(error2);
+            if (!validationService.PasswordValidator.Validate(req.Password, out var error2))
+                stringBuilder.AppendLine(error2);
 
                 if (repositoryWrapper.UserRepository.FindUserByEmail(req.Email) != null)
                     stringBuilder.AppendLine("User with this email exists");
