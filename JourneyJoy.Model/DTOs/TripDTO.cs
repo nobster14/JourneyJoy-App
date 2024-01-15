@@ -35,7 +35,7 @@ namespace JourneyJoy.Model.DTOs
             if (retTrip.Route != null && trip.Attractions != null)
                 retTrip.AttractionsNotOnRoute = retTrip.Attractions
                     .Select(it => it.Id)
-                    .Where(it => retTrip.Route.StarePointAttractionId != it && retTrip.Route.AttractionsInOrder.Any(it2 => it2.Contains(it)))
+                    .Where(it => retTrip.Route.StarePointAttractionId != it && !retTrip.Route.AttractionsInOrder.Any(it2 => it2.Contains(it)))
                     .ToList();
 
             return retTrip;

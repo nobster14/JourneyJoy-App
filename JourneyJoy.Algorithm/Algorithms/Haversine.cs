@@ -16,7 +16,7 @@ namespace JourneyJoy.Algorithm.Algorithms
         /// <param name="lat2"></param>
         /// <param name="lon2"></param>
         /// <returns></returns>
-        public static float CalculateFormula(float lat1, float lon1, float lat2, float lon2)
+        public static int CalculateFormula(double lat1, double lon1, double lat2, double lon2)
         {
             const float r = 6378100;
 
@@ -25,7 +25,7 @@ namespace JourneyJoy.Algorithm.Algorithms
             var q = sdLat * sdLat + Math.Cos(lat1) * Math.Cos(lat2) * sdLon * sdLon;
             var d = 2 * r * Math.Asin(Math.Sqrt(q));
 
-            return (float)d;
+            return (int)d;
         }
     }
 }

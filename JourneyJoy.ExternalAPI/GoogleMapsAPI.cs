@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JourneyJoy.Model.DTOs.ExternalAPI.GoogleMaps;
 using System.Globalization;
+using JourneyJoy.Algorithm.Algorithms;
 
 namespace JourneyJoy.ExternalAPI
 {
@@ -59,7 +60,7 @@ namespace JourneyJoy.ExternalAPI
                     if (actualElem.Duration != null)
                         ret[i][j] = actualElem.Duration.Value / 60;
                     else
-                        ret[i][j] = int.MaxValue;
+                        ret[i][j] = Haversine.CalculateFormula(attractions.ElementAt(i).Location.Latitude, attractions.ElementAt(i).Location.Longitude, attractions.ElementAt(j).Location.Latitude, attractions.ElementAt(j).Location.Longitude) / 180;
                 }
 
             return ret;

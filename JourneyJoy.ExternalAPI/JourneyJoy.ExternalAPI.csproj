@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JourneyJoy.Algorithm\JourneyJoy.Algorithm.csproj" />
     <ProjectReference Include="..\JourneyJoy.Model\JourneyJoy.Model.csproj" />
   </ItemGroup>
 
