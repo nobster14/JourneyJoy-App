@@ -85,6 +85,8 @@ namespace JourneyJoy.Algorithm.Algorithms.GeneticOperators
                 }
             }
 
+            child.StartPoint = parent1.StartPoint;
+
             return child;
         }
 
