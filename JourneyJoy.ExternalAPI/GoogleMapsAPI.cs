@@ -56,7 +56,10 @@ namespace JourneyJoy.ExternalAPI
                 {
                     var actualElem = deserializedResponse.Rows[i].Elements[j];
 
-                    ret[i][j] = actualElem.Duration.Value / 60;
+                    if (actualElem.Duration != null)
+                        ret[i][j] = actualElem.Duration.Value / 60;
+                    else
+                        ret[i][j] = int.MaxValue;
                 }
 
             return ret;
