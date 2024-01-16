@@ -17,6 +17,7 @@ namespace JourneyJoy.ExternalAPI
 {
     public class GoogleMapsAPI : BaseAPI
     {
+        private const int GoogleMapsMatrixRowsLimit = 10;
         #region Constructors
         public GoogleMapsAPI(string APIKey, bool isEnabled) : base(APIKey, isEnabled)
         {
@@ -38,7 +39,8 @@ namespace JourneyJoy.ExternalAPI
 
         public async Task<int[][]> GetDistanceMatrixForAttraction(IEnumerable<AttractionDTO> attractions)
         {
-            var destinasionsOriginsString = attractions.Select(it => $"{it.Location.Latitude.ToString(CultureInfo.InvariantCulture)}%2C{it.Location.Longitude.ToString(CultureInfo.InvariantCulture)}").Aggregate((it1, it2) => $"{it1}%7C{it2}");
+            /// Limit Google Maps Distance API to macierz 10x10
+            var destinasionsOriginsString = attractions.Take(GoogleMapsMatrixRowsLimit).Select(it => $"{it.Location.Latitude.ToString(CultureInfo.InvariantCulture)}%2C{it.Location.Longitude.ToString(CultureInfo.InvariantCulture)}").Aggregate((it1, it2) => $"{it1}%7C{it2}");
 
             var response =  await MakeGETCall($"https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destinasionsOriginsString}&origins={destinasionsOriginsString}&key={APIKey}");
 
@@ -55,9 +57,12 @@ namespace JourneyJoy.ExternalAPI
             foreach (var i in Enumerable.Range(0, attractions.Count()))
                 foreach (var j in Enumerable.Range(0, attractions.Count()))
                 {
-                    var actualElem = deserializedResponse.Rows[i].Elements[j];
+                    DistanceDTO actualElem = null;
 
-                    if (actualElem.Duration != null)
+                    if (deserializedResponse != null && i < GoogleMapsMatrixRowsLimit && j < GoogleMapsMatrixRowsLimit && deserializedResponse.Rows[i] != null && deserializedResponse.Rows[i].Elements[j] != null)
+                        actualElem = deserializedResponse.Rows[i].Elements[j];
+
+                    if (actualElem != null && actualElem.Duration != null)
                         ret[i][j] = actualElem.Duration.Value / 60;
                     else
                         ret[i][j] = Haversine.CalculateFormula(attractions.ElementAt(i).Location.Latitude, attractions.ElementAt(i).Location.Longitude, attractions.ElementAt(j).Location.Latitude, attractions.ElementAt(j).Location.Longitude) / 180;
