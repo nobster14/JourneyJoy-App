@@ -40,6 +40,9 @@ namespace JourneyJoy.Model.Requests
             if (!Photo.IsNullOrEmpty())
                 attraction.Photo = Photo;
 
+            if (TimeNeeded != 0)
+                attraction.TimeNeeded = TimeNeeded;
+
             attraction.LocationType = LocationType;
 
             if (Location != null)
