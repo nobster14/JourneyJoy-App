@@ -20,8 +20,8 @@ namespace JourneyJoy.Algorithm.Algorithms
         {
             const float r = 6378100;
 
-            var sdLat = Math.Sin((lat2 - lat1) / 2);
-            var sdLon = Math.Sin((lon2 - lon1) / 2);
+            var sdLat = Math.Pow(Math.Sin((lat2 - lat1) / 2), 2);
+            var sdLon = Math.Pow(Math.Sin((lon2 - lon1) / 2), 2);
             var q = sdLat * sdLat + Math.Cos(lat1) * Math.Cos(lat2) * sdLon * sdLon;
             var d = 2 * r * Math.Asin(Math.Sqrt(q));
 
