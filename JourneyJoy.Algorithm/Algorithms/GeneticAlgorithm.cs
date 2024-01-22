@@ -12,8 +12,8 @@ namespace JourneyJoy.Algorithm.Algorithms
     public static class GeneticAlgorithm
     {
         #region Fields
-        private static int StagnationFactor => 20;
-        private static int PopulationSize => 100;
+        private static int StagnationFactor => 100;
+        private static int PopulationSize => 500;
 
         #endregion
 
@@ -62,8 +62,8 @@ namespace JourneyJoy.Algorithm.Algorithms
             var bestIndividuals = new List<(Genome individual, double fitnessValue)>(bestPopulation.Individuals);
             var worstIndividuals = new List<(Genome individual, double fitnessValue)>(worstPopulation.Individuals);
 
-            var bestParents = RouletteWheelSelector.Execute(20, bestPopulation.Individuals);
-            var worstParents = RouletteWheelSelector.Execute(10, worstPopulation.Individuals);
+            var bestParents = RouletteWheelSelector.Execute(100, bestPopulation.Individuals);
+            var worstParents = RouletteWheelSelector.Execute(50, worstPopulation.Individuals);
 
             var offsprings = GeneticOperations.GenerateOffsprings(bestParents, worstParents, information);
 
