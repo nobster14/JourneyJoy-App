@@ -32,7 +32,7 @@ namespace JourneyJoy.UnitTests.AlgorithmTests
         [Test]
         public void CheckIfAlgorithmStepWorks()
         {
-            var basePopulation = new Population(information, 100);
+            var basePopulation = new Population(information, 500);
             (var bestPopulation, var worstPopulation) = basePopulation.DividePopulation();
 
             var bestIndivValue = bestPopulation.Individuals.First().fitnessValue;
