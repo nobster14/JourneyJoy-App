@@ -1,1 +1,1 @@
-# JourneyJoy App
+#Praca inżynierska JourneyJoy App
